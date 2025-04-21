@@ -2,10 +2,10 @@ namespace Needle.Console.MethodsHandler
 {
     public class CommandContainer
     {
-        public string Command { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string[] ParamsDescription { get; set; }
+        public string Command { get; }
+        public string Name { get; }
+        public string Description { get; }
+        public string[] ParamsDescription { get; }
 
         public CommandContainer(string command, string name, string description, params string[] paramsDescription)
         {

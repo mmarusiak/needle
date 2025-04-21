@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Needle.Console.Logger;
 using UnityEngine;
 using Object = System.Object;
 
@@ -8,13 +9,11 @@ namespace Needle.Console.MethodsHandler
 {
     public class ConsoleCommandRegistry : MonoBehaviour
     {
-        private static Dictionary<string, Command> commands = new();
+        private static readonly Dictionary<string, Command> Commands = new();
 
         private void Start()
         {
             RegisterConsoleCommands();
-            Debug.Log(Execute("help", null));
-            Debug.Log(Execute("testCommand", null));
         }
         
         private static void RegisterConsoleCommands()
@@ -30,7 +29,7 @@ namespace Needle.Console.MethodsHandler
                         {
                             CommandContainer container = attr.Container;
                             string commandName = container.Command;
-                            commands[commandName] = new Command(container, method);
+                            Commands[commandName] = new Command(container, method);
                             Debug.Log(method.ReturnParameter);
                             Debug.Log(method.GetParameters().Length);
                             foreach (var p in method.GetParameters())
@@ -42,25 +41,32 @@ namespace Needle.Console.MethodsHandler
             }
         }
 
-        public static string Execute(string commandName, Object[] args)
+        public static Message Execute(string commandName, Object[] args)
         {
-            if (!commands.ContainsKey(commandName)) return "No command found!";
+            if (!Commands.ContainsKey(commandName)) return new Message("No command found!", MessageType.Error);
             
-            Command cmd = commands[commandName];
+            Command cmd = Commands[commandName];
 
             int argsCount = args?.Length ?? 0;
             if (cmd.Method.GetParameters().Length > argsCount) 
-                return $"Expected {cmd.Method.GetParameters().Length} parameters, got {argsCount} parameters!";
+                return new Message($"Expected {cmd.Method.GetParameters().Length} parameters, got {argsCount} parameters!", MessageType.Error);
 
-            Object result = cmd.Method.Invoke(null, args);
-            return cmd.Method.ReturnType == typeof(void) ? "Void was called!" : (string) result;
+            try
+            {
+                Object result = cmd.Method.Invoke(null, args);
+                return new Message(cmd.Method.ReturnType == typeof(void) ? "Void was called!" : (string) result, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                return new Message(e.Message + $"\n Type help {cmd.Container.Command} to get help!", MessageType.Error);
+            }
         }
 
         [ConsoleMethod("help", "Help method", "Displays all commands with descriptions!")]
         public static string Help()
         {
             string r = "List of commands:";
-            foreach (var cmd in commands)
+            foreach (var cmd in Commands)
             {
                 r += $"\n \n {cmd.Value.GetInfo()}";
             }
