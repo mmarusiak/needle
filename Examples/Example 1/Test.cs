@@ -5,7 +5,7 @@ namespace Needle.Examples.Example_1
 {
     public class Test
     {
-        [ConsoleMethod("Test", "Testing!")]
+        [ConsoleMethod("testCommand", "Test", "Testing!", "arg1 is a test string", "arg2 is a test int")]
         public static void TestVoid(string arg1, int arg2)
         {
             Debug.Log("test" + arg1 + arg2);

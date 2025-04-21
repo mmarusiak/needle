@@ -5,15 +5,13 @@ namespace Needle.Console.MethodsHandler
     [AttributeUsage(AttributeTargets.Method, Inherited = true)]
     public class ConsoleMethod : Attribute
     {
-        private string _name, _description;
+        private CommandContainer _container;
         
-        public ConsoleMethod(string name, string description)
+        public ConsoleMethod(string commandName, string name, string description, params string[] paramsDescription)
         {
-            _name = name;
-            _description = description;
+            _container = new CommandContainer(commandName, name, description, paramsDescription);
         }
 
-        public string GetName() => _name;
-        public string GetDescription() => _description;
+        public CommandContainer Container => _container;
     }
 }

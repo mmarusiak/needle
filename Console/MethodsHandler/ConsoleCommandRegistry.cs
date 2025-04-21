@@ -8,11 +8,13 @@ namespace Needle.Console.MethodsHandler
 {
     public class ConsoleCommandRegistry : MonoBehaviour
     {
-        private static Dictionary<string, MethodContainer> commands = new();
+        private static Dictionary<string, Command> commands = new();
 
         private void Start()
         {
             RegisterConsoleCommands();
+            Debug.Log(Execute("help", null));
+            Debug.Log(Execute("testCommand", null));
         }
         
         private static void RegisterConsoleCommands()
@@ -21,13 +23,14 @@ namespace Needle.Console.MethodsHandler
             {
                 foreach (var type in assembly.GetTypes())
                 {
-                    foreach (var method in type.GetMethods(BindingFlags.Static))
+                    foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                     {
                         var attr = method.GetCustomAttribute<ConsoleMethod>();
                         if (attr != null)
                         {
-                            string commandName = attr.GetName() ?? method.Name;
-                            commands[commandName] = new MethodContainer(commandName, attr.GetDescription(), method);
+                            CommandContainer container = attr.Container;
+                            string commandName = container.Command;
+                            commands[commandName] = new Command(container, method);
                             Debug.Log(method.ReturnParameter);
                             Debug.Log(method.GetParameters().Length);
                             foreach (var p in method.GetParameters())
@@ -41,12 +44,27 @@ namespace Needle.Console.MethodsHandler
 
         public static string Execute(string commandName, Object[] args)
         {
-            if (commands.ContainsKey(commandName))
-            {
-                commands[commandName].GetMethod().Invoke(null, args);
-            }
+            if (!commands.ContainsKey(commandName)) return "No command found!";
+            
+            Command cmd = commands[commandName];
 
-            return "No command found!";
+            int argsCount = args?.Length ?? 0;
+            if (cmd.Method.GetParameters().Length > argsCount) 
+                return $"Expected {cmd.Method.GetParameters().Length} parameters, got {argsCount} parameters!";
+
+            Object result = cmd.Method.Invoke(null, args);
+            return cmd.Method.ReturnType == typeof(void) ? "Void was called!" : (string) result;
+        }
+
+        [ConsoleMethod("help", "Help method", "Displays all commands with descriptions!")]
+        public static string Help()
+        {
+            string r = "List of commands:";
+            foreach (var cmd in commands)
+            {
+                r += $"\n \n {cmd.Value.GetInfo()}";
+            }
+            return r;
         }
     }
 }
