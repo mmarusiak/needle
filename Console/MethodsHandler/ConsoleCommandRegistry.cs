@@ -52,7 +52,7 @@ namespace Needle.Console.MethodsHandler
                 return new Message($"Expected {cmd.Method.GetParameters().Length} parameters, got {argsCount} parameters! " +
                                    $"\n Type \'{HelpCommand} {cmd.Container.Command}\' to get help!", MessageType.Error);
             
-            if (methodParams.Length < argsCount)
+            if (methodParams.Length > argsCount)
             {
                 List<object> allArgs = args == null ? new() : new(args);
                 for (int i = allArgs.Count; i < methodParams.Length; i++)
