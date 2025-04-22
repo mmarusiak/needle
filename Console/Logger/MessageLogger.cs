@@ -21,8 +21,8 @@ namespace Needle.Console.Logger
             string content = msg.Content;
             string color = NeedleColors.ColorToHex(NeedleColors.Colors[(int) msg.Type]);
             
-            if (msg.Type == MessageType.UserInput)  output.text += $"\n <b><i>>  <color={color}>{content}</color></i>";
-            else output.text += $"\n <b><i>[{msg.Type.ToString()}]</i></b> <color={color}>{content}</color>";
+            if (msg.Type == MessageType.UserInput)  output.text += $"\n <b><i><color={color}>> {content}</color></i>";
+            else output.text += $"\n <color={color}><b><i>[{msg.Type.ToString()}]</i></b></color> {content}";
             
             RectTransform rectTransform = output.GetComponent<RectTransform>();
             
