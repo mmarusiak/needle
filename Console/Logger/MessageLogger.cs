@@ -36,7 +36,9 @@ namespace Needle.Console.Logger
         {
             string[] entries = entry.Split(" ");
             DisplayMessage(new Message(entry, MessageType.UserInput));
-            DisplayMessage(ConsoleCommandRegistry.Execute(entries[0], entries.Skip(1).ToArray()));
+            string[] args = entries.Length > 1 ? entries.Skip(1).ToArray() : null;
+            Debug.Log(args);
+            DisplayMessage(ConsoleCommandRegistry.Execute(entries[0], args));
         }
     }
 }

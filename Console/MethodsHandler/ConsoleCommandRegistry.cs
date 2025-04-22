@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Needle.Console.Logger;
 using UnityEngine;
@@ -10,6 +11,8 @@ namespace Needle.Console.MethodsHandler
     public class ConsoleCommandRegistry : MonoBehaviour
     {
         private static readonly Dictionary<string, Command> Commands = new();
+        // name of help command
+        private const string HelpCommand = "help";
 
         private void Start()
         {
@@ -30,41 +33,54 @@ namespace Needle.Console.MethodsHandler
                             CommandContainer container = attr.Container;
                             string commandName = container.Command;
                             Commands[commandName] = new Command(container, method);
-                            Debug.Log(method.ReturnParameter);
-                            Debug.Log(method.GetParameters().Length);
-                            foreach (var p in method.GetParameters())
-                                Debug.Log(p.Name + p.ParameterType);
-                            Debug.Log($"Registered console method: {commandName}");
                         }
                     }
                 }
             }
         }
 
-        public static Message Execute(string commandName, Object[] args)
+        public static Message Execute(string commandName, object[] args)
         {
-            if (!Commands.ContainsKey(commandName)) return new Message("No command found!", MessageType.Error);
+            if (!Commands.ContainsKey(commandName)) return new Message($"No command found! \n Type \'{HelpCommand}\' to get help with all commands!", MessageType.Error);
             
             Command cmd = Commands[commandName];
 
             int argsCount = args?.Length ?? 0;
-            if (cmd.Method.GetParameters().Length > argsCount) 
-                return new Message($"Expected {cmd.Method.GetParameters().Length} parameters, got {argsCount} parameters!", MessageType.Error);
-
+            int optionalParams = 0;
+            var methodParams = cmd.Method.GetParameters();
+            for (int i = 0; i < methodParams.Length; optionalParams = methodParams[i++].HasDefaultValue ? optionalParams + 1 : optionalParams);
+            if (methodParams.Length - optionalParams > argsCount) 
+                return new Message($"Expected {cmd.Method.GetParameters().Length} parameters, got {argsCount} parameters! " +
+                                   $"\n Type \'{HelpCommand} {cmd.Container.Command}\' to get help!", MessageType.Error);
+            
+            if (methodParams.Length != argsCount)
+            {
+                List<object> allArgs = args == null ? new() : new(args);
+                for (int i = allArgs.Count; i < methodParams.Length; i++)
+                    if(methodParams[i].HasDefaultValue) allArgs.Add(methodParams[i].DefaultValue);
+                args = allArgs.ToArray();
+            }
+            
             try
             {
-                Object result = cmd.Method.Invoke(null, args);
+                var result = cmd.Method.Invoke(null, args);
                 return new Message(cmd.Method.ReturnType == typeof(void) ? "Void was called!" : (string) result, MessageType.Info);
             }
             catch (Exception e)
             {
-                return new Message(e.Message + $"\n Type help {cmd.Container.Command} to get help!", MessageType.Error);
+                Debug.Log("here");
+                return new Message(e.Message + $"\n Type \'{HelpCommand} {cmd.Container.Command}\' to get help!", MessageType.Error);
             }
         }
 
-        [ConsoleMethod("help", "Help method", "Displays all commands with descriptions!")]
-        public static string Help()
+        [ConsoleMethod(HelpCommand, "Help method", "Displays all commands with descriptions!")]
+        public static string Help(string commandForHelp = null)
         {
+            if (commandForHelp != null)
+            {
+                if (Commands.ContainsKey(commandForHelp)) return $"\n {Commands[commandForHelp].GetInfo()}";
+                return "Command not found!";
+            }
             string r = "List of commands:";
             foreach (var cmd in Commands)
             {
