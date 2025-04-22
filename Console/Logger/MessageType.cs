@@ -5,6 +5,7 @@ namespace Needle.Console.Logger
         Info,
         Warning,
         Error,
-        Debug
+        Debug,
+        UserInput
     }
 }

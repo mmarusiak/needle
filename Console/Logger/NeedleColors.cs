@@ -10,6 +10,7 @@ namespace Needle.Console.Logger
             new(225, 225, 55), // warning
             new(255, 0, 0), // error 
             new(200, 200, 200), // debug
+            new (175, 175, 175) // user input
         };
         
         public static string ColorToHex(Color color)
