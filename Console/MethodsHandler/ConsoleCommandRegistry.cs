@@ -44,23 +44,22 @@ namespace Needle.Console.MethodsHandler
             if (!Commands.ContainsKey(commandName)) return new Message($"No command found! \n Type \'{HelpCommand}\' to get help with all commands!", MessageType.Error);
             
             Command cmd = Commands[commandName];
-
-            int argsCount = args?.Length ?? 0;
-            int optionalParams = 0;
+            int argsCount = args?.Length ?? 0, optionalParams = 0;
             var methodParams = cmd.Method.GetParameters();
+            
             for (int i = 0; i < methodParams.Length; optionalParams = methodParams[i++].HasDefaultValue ? optionalParams + 1 : optionalParams);
-            if (methodParams.Length - optionalParams > argsCount) 
+            if (methodParams.Length - optionalParams > argsCount || argsCount > methodParams.Length) 
                 return new Message($"Expected {cmd.Method.GetParameters().Length} parameters, got {argsCount} parameters! " +
                                    $"\n Type \'{HelpCommand} {cmd.Container.Command}\' to get help!", MessageType.Error);
             
-            if (methodParams.Length != argsCount)
+            if (methodParams.Length < argsCount)
             {
                 List<object> allArgs = args == null ? new() : new(args);
                 for (int i = allArgs.Count; i < methodParams.Length; i++)
                     if(methodParams[i].HasDefaultValue) allArgs.Add(methodParams[i].DefaultValue);
                 args = allArgs.ToArray();
             }
-            
+
             try
             {
                 var result = cmd.Method.Invoke(null, args);
