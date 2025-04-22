@@ -1,17 +1,17 @@
+#define ENABLE_HELP_COMMAND
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Needle.Console.Logger;
 using UnityEngine;
-using Object = System.Object;
 
 namespace Needle.Console.MethodsHandler
 {
     public class ConsoleCommandRegistry : MonoBehaviour
     {
         private static readonly Dictionary<string, Command> Commands = new();
-        // name of help command
+        // name of help command, can be custom command
         private const string HelpCommand = "help";
 
         private void Start()
@@ -72,7 +72,7 @@ namespace Needle.Console.MethodsHandler
                 return new Message(e.Message + $"\n Type \'{HelpCommand} {cmd.Container.Command}\' to get help!", MessageType.Error);
             }
         }
-
+#if ENABLE_HELP_COMMAND
         [ConsoleMethod(HelpCommand, "Help method", "Displays all commands with descriptions!")]
         public static string Help(string commandForHelp = null)
         {
@@ -88,5 +88,6 @@ namespace Needle.Console.MethodsHandler
             }
             return r;
         }
+#endif
     }
 }

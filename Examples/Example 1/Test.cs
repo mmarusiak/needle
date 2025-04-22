@@ -16,5 +16,12 @@ namespace Needle.Examples.Example_1
         {
             Debug.Log("test" + arg1 + arg2);
         }
+
+        [ConsoleMethod("testHelp", "Test", "Testing!", "arg1 is a test string", "arg2 is a test string also")]
+        public static string TestHelp(string arg1 = null)
+        {
+            if (arg1 == null) return "Arg is null but it's help, I'm helping you duh.";
+            return $"{arg1}? Man, it's complicated, can't help you with that!";
+        }
     }
 }
