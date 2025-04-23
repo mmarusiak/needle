@@ -39,30 +39,40 @@ namespace Needle.Console.MethodsHandler
             }
         }
 
-        public static Message Execute(string commandName, object[] args)
+        private static object[] ParseArgs(string[] args, ParameterInfo[] parameterInfos)
+        {
+            List<object> outArgs = new ();
+            for (int i = 0; i < parameterInfos.Length; i++)
+            {
+                var param = parameterInfos[i];
+                if (args.Length <= i && param.HasDefaultValue) outArgs.Add(param.DefaultValue);
+                else if (args.Length <= i) return null;
+                else outArgs.Add(Convert.ChangeType(args[i], param.ParameterType));
+            }
+
+            return outArgs.ToArray();
+        }
+        
+        public static Message Execute(string commandName, string[] args)
         {
             if (!Commands.ContainsKey(commandName)) return new Message($"No command found! \n Type \'{HelpCommand}\' to get help with all commands!", MessageType.Error);
             
             Command cmd = Commands[commandName];
-            int argsCount = args?.Length ?? 0, optionalParams = 0;
-            var methodParams = cmd.Method.GetParameters();
-            
-            for (int i = 0; i < methodParams.Length; optionalParams = methodParams[i++].HasDefaultValue ? optionalParams + 1 : optionalParams);
-            if (methodParams.Length - optionalParams > argsCount || argsCount > methodParams.Length) 
-                return new Message($"Expected {cmd.Method.GetParameters().Length} parameters, got {argsCount} parameters! " +
-                                   $"\n Type \'{HelpCommand} {cmd.Container.Command}\' to get help!", MessageType.Error);
-            
-            if (methodParams.Length > argsCount)
+            ParameterInfo[] methodParams = cmd.Method.GetParameters();
+
+            object[] outArgs = null;
+            if (methodParams.Length != 0)
             {
-                List<object> allArgs = args == null ? new() : new(args);
-                for (int i = allArgs.Count; i < methodParams.Length; i++)
-                    if(methodParams[i].HasDefaultValue) allArgs.Add(methodParams[i].DefaultValue);
-                args = allArgs.ToArray();
+                outArgs = ParseArgs(args, methodParams);
+                if (outArgs == null)
+                    return new Message(
+                        $"Expected {methodParams.Length}, but got {args.Length} arguments! \n Type \'{HelpCommand} {commandName}\' to get help with this command!",
+                        MessageType.Error);
             }
 
             try
             {
-                var result = cmd.Method.Invoke(null, args);
+                var result = cmd.Method.Invoke(null, outArgs);
                 return new Message(cmd.Method.ReturnType == typeof(void) ? "Void was called!" : (string) result, MessageType.Info);
             }
             catch (Exception e)

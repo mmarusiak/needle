@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,9 +35,14 @@ namespace Needle.Console.Logger
 
         public void RunCommand(string entry)
         {
+            // to do: handle args with spaces, f.e log "im new message to be logged!"
+            // add to them separators - whitespace[ ]/comma[,]
+            // command will be always before first space
+            // then look if it starts and ends with " ", or ' '
+            // if so, we should handle args looking inside them
             string[] entries = entry.Split(" ");
             DisplayMessage(new Message(entry, MessageType.UserInput));
-            string[] args = entries.Length > 1 ? entries.Skip(1).ToArray() : null;
+            string[] args = entries.Length > 1 ? entries.Skip(1).ToArray() : Array.Empty<string>();
             Debug.Log(args);
             DisplayMessage(ConsoleCommandRegistry.Execute(entries[0], args));
         }
