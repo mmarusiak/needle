@@ -63,7 +63,15 @@ namespace Needle.Console.MethodsHandler
             object[] outArgs = null;
             if (methodParams.Length != 0)
             {
-                outArgs = ParseArgs(args, methodParams);
+                try
+                {
+                    outArgs = ParseArgs(args, methodParams);
+                }
+                catch (Exception e)
+                {
+                    return new Message(e.Message, MessageType.Error);
+                }
+
                 if (outArgs == null)
                     return new Message(
                         $"Expected {methodParams.Length}, but got {args.Length} arguments! \n Type \'{HelpCommand} {commandName}\' to get help with this command!",
