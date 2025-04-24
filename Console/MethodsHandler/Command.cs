@@ -6,11 +6,13 @@ namespace Needle.Console.MethodsHandler
     {
         public CommandContainer Container { get; }
         public MethodInfo Method { get; }
+        public object TargetInstance { get; }
 
-        public Command(CommandContainer container, MethodInfo method)
+        public Command(CommandContainer container, MethodInfo method, object targetInstance = null)
         {
             Container = container;
             Method = method;
+            TargetInstance = targetInstance;
         }
 
         public string GetInfo()

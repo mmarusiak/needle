@@ -4,19 +4,56 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Needle.Console.Logger;
-using UnityEngine;
 
 namespace Needle.Console.MethodsHandler
 {
-    public class ConsoleCommandRegistry : MonoBehaviour
+    public static class ConsoleCommandRegistry
     {
-        private static readonly Dictionary<string, Command> Commands = new();
+        private static readonly Dictionary<string, List<Command>> Commands = new();
         // name of help command, can be custom command
         private const string HelpCommand = "help";
 
-        private void Start()
+        public static void Initialize() => RegisterConsoleCommands();
+
+        public static void RegisterInstanceCommands(object instance)
         {
-            RegisterConsoleCommands();
+            Type type = instance.GetType();
+            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            foreach (var method in methods)
+            {
+                var attr = method.GetCustomAttribute<ConsoleMethod>();
+                if (attr == null) continue;
+                
+                CommandContainer container = attr.Container;
+                string commandName = container.Command;
+
+                if (!Commands.ContainsKey(commandName)) Commands[commandName] = new List<Command>();
+                Commands[commandName].Add(new Command(container, method, instance));
+            }
+        }
+
+        public static void UnregisterInstanceCommands(object instance)
+        {
+            Type type = instance.GetType();
+            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            foreach (var method in methods)
+            {
+                var attr = method.GetCustomAttribute<ConsoleMethod>();
+                if (attr == null) continue;
+
+                CommandContainer container = attr.Container;
+                string commandName = container.Command;
+                List<Command> cmds = Commands[commandName];
+                
+                for (int i = 0; i < cmds.Count; i++)
+                {
+                    if (cmds[i].TargetInstance != instance) continue;
+                    cmds.RemoveAt(i);
+                    break;
+                }
+            }
         }
         
         private static void RegisterConsoleCommands()
@@ -32,7 +69,9 @@ namespace Needle.Console.MethodsHandler
                         {
                             CommandContainer container = attr.Container;
                             string commandName = container.Command;
-                            Commands[commandName] = new Command(container, method);
+                            
+                            if (!Commands.ContainsKey(commandName)) Commands[commandName] = new List<Command>();
+                            Commands[commandName].Add(new Command(container, method));
                         }
                     }
                 }
@@ -52,12 +91,9 @@ namespace Needle.Console.MethodsHandler
 
             return outArgs.ToArray();
         }
-        
-        public static Message Execute(string commandName, string[] args)
+
+        private static bool CallCommand(Command cmd, string commandName, string[] args, out string result)
         {
-            if (!Commands.ContainsKey(commandName)) return new Message($"No command found! \n Type \'{HelpCommand}\' to get help with all commands!", MessageType.Error);
-            
-            Command cmd = Commands[commandName];
             ParameterInfo[] methodParams = cmd.Method.GetParameters();
 
             object[] outArgs = null;
@@ -69,38 +105,65 @@ namespace Needle.Console.MethodsHandler
                 }
                 catch (Exception e)
                 {
-                    return new Message(e.Message, MessageType.Error);
+                    result = e.Message;
+                    return false;
                 }
 
-                if (outArgs == null)
-                    return new Message(
-                        $"Expected {methodParams.Length}, but got {args.Length} arguments! \n Type \'{HelpCommand} {commandName}\' to get help with this command!",
-                        MessageType.Error);
+                if (outArgs == null){
+                    result = $"Expected {methodParams.Length}, but got {args.Length} arguments! \n Type \'{HelpCommand} {commandName}\' to get help with this command!";
+                    return false;
+                }
             }
 
             try
             {
-                var result = cmd.Method.Invoke(null, outArgs);
-                return new Message(cmd.Method.ReturnType == typeof(void) ? "Void was called!" : (string) result, MessageType.Info);
+                var commandOutcome = cmd.Method.Invoke(cmd.TargetInstance, outArgs);
+                result = cmd.Method.ReturnType == typeof(void) ? "Void was called!" : (string) commandOutcome;
+                return true;
             }
             catch (Exception e)
             {
-                return new Message((e.InnerException != null ? e.InnerException.Message : e.Message) + $"\n Type \'{HelpCommand} {cmd.Container.Command}\' to get help!", MessageType.Error);
+                result = (e.InnerException != null ? e.InnerException.Message : e.Message) +
+                         $"\n Type \'{HelpCommand} {cmd.Container.Command}\' to get help!";
+                return false;
             }
         }
+        
+        public static Message Execute(string commandName, string[] args)
+        {
+            if (!Commands.ContainsKey(commandName) || Commands[commandName].Count == 0) return new Message($"Command \'{commandName}\' was not found! \n Type \'{HelpCommand}\' to get help with all commands!", MessageType.Error);
+
+            string outcome = "";
+            foreach (var cmd in Commands[commandName])
+            {
+                bool success = CallCommand(cmd, commandName, args, out string message);
+                // if error occured
+                string originPointer = $"[origin: {(cmd.TargetInstance == null ? "static method" : cmd.TargetInstance.ToString())}]";
+                if (!success) return new Message(message + $"{originPointer}", MessageType.Error);
+                outcome += message + $"{originPointer}, ";
+            }
+
+            return new Message(outcome, MessageType.Info);
+        }
+        
 #if ENABLE_HELP_COMMAND
         [ConsoleMethod(HelpCommand, "Help method", "Displays all commands with descriptions!")]
         public static string Help(string commandForHelp = null)
         {
             if (commandForHelp != null)
             {
-                if (Commands.ContainsKey(commandForHelp)) return $"{Commands[commandForHelp].GetInfo()}";
-                throw new Exception($"{commandForHelp} command not found!");
+                if (Commands.ContainsKey(commandForHelp))
+                {
+                    if (Commands[commandForHelp].Count == 0) return $"Command {commandForHelp} unavailable.";
+                    return $"{Commands[commandForHelp][0].GetInfo()}";
+                }
+                throw new Exception($"Command {commandForHelp} not found!");
             }
             string r = "List of commands:";
             foreach (var cmd in Commands)
             {
-                r += $"\n \n {cmd.Value.GetInfo()}";
+                if (cmd.Value.Count == 0) continue;
+                r += $"\n \n {cmd.Value[0].GetInfo()}";
             }
             return r;
         }
