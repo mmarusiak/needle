@@ -85,8 +85,6 @@ namespace Needle.Console.MethodsHandler
             }
             catch (Exception e)
             {
-                Debug.Log(e.Message);
-                Debug.Log(e);
                 return new Message((e.InnerException != null ? e.InnerException.Message : e.Message) + $"\n Type \'{HelpCommand} {cmd.Container.Command}\' to get help!", MessageType.Error);
             }
         }
@@ -97,7 +95,7 @@ namespace Needle.Console.MethodsHandler
             if (commandForHelp != null)
             {
                 if (Commands.ContainsKey(commandForHelp)) return $"{Commands[commandForHelp].GetInfo()}";
-                throw new Exception("Command not found!");
+                throw new Exception($"{commandForHelp} command not found!");
             }
             string r = "List of commands:";
             foreach (var cmd in Commands)
