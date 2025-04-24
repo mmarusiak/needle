@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Needle.Console.MethodsHandler;
@@ -33,14 +31,18 @@ namespace Needle.Console.Logger
             scrollRect.verticalNormalizedPosition = 0f;
         }
 
+        private int countSubstringInString(string source, string substring) =>
+            source.Length - source.Replace(substring, "").Length;
+        
         public void RunCommand(string entry)
         {
             string[] entries = entry.Split(" ");
             DisplayMessage(new Message(entry, MessageType.UserInput));
             List<string> args = entries.Length > 1 ? entries.Skip(1).ToList() : new List<string>();
-         
+
+            int count = countSubstringInString(entry.Substring(entries[0].Length), "\"");
             // getting args in " 
-            for (int i = 0; i < args.Count; i++)
+            for (int i = 0; i < args.Count && count >= 2; i++)
             {
                 if (!args[i].StartsWith("\"")) continue;
                 string currentString = args[i];
@@ -50,6 +52,7 @@ namespace Needle.Console.Logger
                     if (!args[j].EndsWith("\"")) continue;
                     for (int k = j; k > i; args.RemoveAt(k--));
                     args[i] = currentString.Substring(1, currentString.Length - 2);
+                    count -= countSubstringInString(currentString, "\""); // because " can be also inside, not in start/end
                     break;
                 }
             }
