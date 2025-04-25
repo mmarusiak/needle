@@ -15,6 +15,7 @@ namespace Needle.Console
         [SerializeField] private ScrollRect scrollRect;
         private List<string> _messages;
         private int _currentMessage;
+        private static bool _isQuitting = false;
         
         private static NeedleConsole _instance;
 
@@ -28,7 +29,7 @@ namespace Needle.Console
         public static void Log(Message msg)
         {
             if (_instance != null) _instance.DisplayMessage(msg);
-            else Debug.LogError("You need to create NeedleConsole GameObject first! See Examples!");
+            else if (Application.isPlaying && !_isQuitting) Debug.LogError("You need to create NeedleConsole GameObject first! See Examples!");
         }
 
         public static void RegisterInstanceCommand(object source) =>
@@ -81,5 +82,11 @@ namespace Needle.Console
 
             DisplayMessage(ConsoleCommandRegistry.Execute(entries[0], args.ToArray()));
         }
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetOnPlayMode() => _isQuitting = false;
+        
+        private void OnApplicationQuit() => _isQuitting = true;
+        
     }
 }
