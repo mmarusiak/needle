@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Needle.Console.Logger;
 using Needle.Console.MethodsHandler;
+using Needle.Console.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -41,10 +42,10 @@ namespace Needle.Console
         private void DisplayMessage(Message msg)
         {
             string content = msg.Content;
-            string color = NeedleColors.ColorToHex(NeedleColors.Colors[(int) msg.Type]);
+            string color = NeedleColors.GetColor((int) msg.Type);
             
-            if (msg.Type == MessageType.UserInput)  output.text += $"\n <b><i><color={color}>> {content}</color></i>";
-            else output.text += $"\n <color={color}><b><i>[{msg.Type.ToString()}]</i></b></color> {content}";
+            if (msg.Type == MessageType.UserInput)  output.text += $"\n{Utils.AttributizeText( $"> {content}", "b", $"color={color}")}";
+            else output.text += $"\n {Utils.AttributizeText( $"[{msg.Type.ToString()}]", $"color={color}", "b", "i")} {content}";
             
             RectTransform rectTransform = output.GetComponent<RectTransform>();
             

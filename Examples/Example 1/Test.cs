@@ -42,6 +42,7 @@ namespace Needle.Examples.Example_1
         [ConsoleMethod("testNonStatic", "Non static command", "It should call command from MonoBehaviour, in runtime", "arg1 is string")]
         public string TestNonStatic(string arg1 = null)
         {
+            NeedleConsole.Log("Hello world!");
             if (arg1 == null) return "Arg is null but it's help, I'm helping you duh. " + name;
             return $"{arg1}? Man, it's complicated, can't help you with that! " + name;
         }

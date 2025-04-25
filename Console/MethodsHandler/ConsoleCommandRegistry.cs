@@ -2,15 +2,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Needle.Console.Logger;
+using Needle.Console.Utilities;
 
 namespace Needle.Console.MethodsHandler
 {
     public static class ConsoleCommandRegistry
     {
-        private static readonly Dictionary<string, List<Command>> Commands = new();
         // name of help command, can be custom command
+        public static readonly Dictionary<string, List<Command>> Commands = new();
         private const string HelpCommand = "help";
 
         public static void Initialize() => RegisterConsoleCommands();
@@ -139,8 +141,10 @@ namespace Needle.Console.MethodsHandler
                 bool success = CallCommand(cmd, commandName, args, out string message);
                 // if error occured
                 string originPointer = $"[origin: {(cmd.TargetInstance == null ? "static method" : cmd.TargetInstance.ToString())}]";
-                if (!success) return new Message(message + $"{originPointer}", MessageType.Error);
-                outcome += message + $"{originPointer}, ";
+                originPointer = Utils.ColorizeText(originPointer, NeedleColors.Colors[(int)MessageType.UserInput]);
+                originPointer = Utils.ItalizeText(originPointer);
+                if (!success) return new Message(message + $"\n\t{originPointer}", MessageType.Error);
+                outcome += message + $"\n\t{originPointer}";
             }
 
             return new Message(outcome, MessageType.Info);
@@ -163,7 +167,9 @@ namespace Needle.Console.MethodsHandler
             foreach (var cmd in Commands)
             {
                 if (cmd.Value.Count == 0) continue;
-                r += $"\n \n {cmd.Value[0].GetInfo()}";
+                string origins = string.Join(", ", cmd.Value.Select(src => 
+                    src.TargetInstance == null ? "static" : src.TargetInstance.ToString()));
+                r += $"\n\n{cmd.Value[0].GetInfo()}\n\t[origins: {origins}]";
             }
             return r;
         }
