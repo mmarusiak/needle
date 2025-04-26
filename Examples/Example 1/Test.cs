@@ -26,13 +26,13 @@ namespace Needle.Examples.Example_1
             Debug.Log("test" + arg1 + arg2);
         }
         
-        [ConsoleMethod("testCommand2", "Test", "Testing!", "arg1 is a test string", "arg2 is a test string also")]
+        [ConsoleMethod("something", "Test", "Testing!", "arg1 is a test string", "arg2 is a test string also")]
         public static void TestVoidB(string arg1, string arg2)
         {
             Debug.Log("test" + arg1 + " "+ arg2);
         }
 
-        [ConsoleMethod("testHelp", "Test", "Testing!", "arg1 is a test string", "arg2 is a test string also")]
+        [ConsoleMethod("newHelp", "Test", "Testing!", "arg1 is a test string", "arg2 is a test string also")]
         public static string TestHelp(string arg1 = null)
         {
             if (arg1 == null) return "Arg is null but it's help, I'm helping you duh.";

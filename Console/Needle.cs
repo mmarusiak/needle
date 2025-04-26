@@ -14,7 +14,10 @@ namespace Needle.Console
     {
         [SerializeField] private TextMeshProUGUI output;
         [SerializeField] private ScrollRect scrollRect;
-        private List<string> _messages;
+        [SerializeField] private List<TextMeshProUGUI> suggestionsUI = new();
+
+        private List<string> _currentSuggestions = new ();
+            
         private int _currentMessage;
         private static bool _isQuitting = false;
         
@@ -81,7 +84,29 @@ namespace Needle.Console
                 }
             }
 
+            for (int i = 0; i < suggestionsUI.Count; suggestionsUI[i].text = "");
+            _currentSuggestions.Clear();
+            _currentSuggestions.Add(entry);
             DisplayMessage(ConsoleCommandRegistry.Execute(entries[0], args.ToArray()));
+        }
+
+        public void ShowSuggestions(string newInput)
+        {
+            _currentSuggestions = GetSuggestions(newInput, suggestionsUI.Count);
+            for (int i = 0; i < _currentSuggestions.Count; suggestionsUI[i].text = _currentSuggestions[i++]);
+        }
+        
+        public List<string> GetSuggestions(string input, int amount)
+        {
+            if (string.IsNullOrEmpty(input))
+                return new List<string>();
+
+            var matches = ConsoleCommandRegistry.Commands.Keys.ToArray()
+                .OrderBy(cmd => Utils.LevenshteinDistance(input.ToLower(), cmd.ToLower()))
+                .Take(amount)
+                .ToList();
+
+            return matches;
         }
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
