@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Needle.Console.Core
+namespace Needle.Console.Core.Command
 {
     public class Parameter
     {

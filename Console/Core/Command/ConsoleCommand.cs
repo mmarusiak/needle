@@ -2,10 +2,10 @@ using System;
 using System.Reflection;
 using UnityEngine.Assertions;
 
-namespace Needle.Console.Core
+namespace Needle.Console.Core.Command
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = true)]
-    public class Command : Attribute
+    public class ConsoleCommand : Attribute
     {
         // static method by default
         private object _source = null;
@@ -14,7 +14,7 @@ namespace Needle.Console.Core
         private Parameter[] _parameters;
         private MethodInfo _method;
 
-        public Command(string name, string description, params Parameter[] parameters)
+        public ConsoleCommand(string name, string description, params Parameter[] parameters)
         {
             _name = name;
             _description = description;

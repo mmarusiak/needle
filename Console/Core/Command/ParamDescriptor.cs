@@ -1,6 +1,6 @@
 using System;
 
-namespace Needle.Console.Core
+namespace Needle.Console.Core.Command
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = true)]
     public class ParamDescriptor : Attribute
