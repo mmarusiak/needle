@@ -8,35 +8,39 @@ namespace Needle.Console.Core.Command
     public class ConsoleCommand : Attribute
     {
         // static method by default
-        private object _source = null;
-        private string _name;
-        private string _description;
-        private Parameter[] _parameters;
+        private object _source;
+        public string Name { get; }
+        public string Description { get; }
+        private Parameter[] _parameters = null;
         private MethodInfo _method;
 
-        public ConsoleCommand(string name, string description, params Parameter[] parameters)
+        public ConsoleCommand(string name, string description)
         {
-            _name = name;
-            _description = description;
-            _parameters = parameters;
+            Name = name;
+            Description = description;
         }
 
-        public void RegisterMethod(MethodInfo method, ParamDescriptor descriptor)
+        public void RegisterMethod(MethodInfo method, ParamIdentifier identifier, ParamDescriptor descriptor)
         {
             _method = method;
-            RegisterParameters(method.GetParameters(), descriptor);
+            RegisterParameters(method.GetParameters(), identifier, descriptor);
         }
 
-        private void RegisterParameters(ParameterInfo[] parameters, ParamDescriptor descriptor)
+        private void RegisterParameters(ParameterInfo[] parameters, ParamIdentifier identifier, ParamDescriptor descriptor)
         {
             _parameters = new Parameter[parameters.Length];
-            ParameterInfo paramInfo = null;
+            ParameterInfo paramInfo = parameters[0];
             for (int i = 0; i < parameters.Length; paramInfo = parameters[i++])
             {
-                Assert.IsNull(paramInfo, "Param info should not be null!");
+                Assert.IsNotNull(paramInfo, "Param info should not be null!");
                 string description = (descriptor != null && descriptor.Length > i) ? descriptor.Get(i) : string.Empty;
-                _parameters[i] = new Parameter(paramInfo, description);
+                string name = identifier == null ? paramInfo.Name : identifier.Name;
+                _parameters[i] = new Parameter(paramInfo, name, description);
             }
         }
+        
+        public void RegisterSource(object source) => _source = source;
+        
+        public object Source => _source;
     }
 }
