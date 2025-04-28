@@ -60,18 +60,17 @@ namespace Needle.Console.Core
                     foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                     {
                         var cmd = method.GetCustomAttribute<ConsoleCommand>();
-                        if (cmd != null)
-                        {
-                            string commandName = cmd.Name;
-                            
-                            ParamIdentifier identifier = method.GetCustomAttribute<ParamIdentifier>();
-                            ParamDescriptor descriptor = method.GetCustomAttribute<ParamDescriptor>();
-                            
-                            cmd.RegisterMethod(method, identifier, descriptor);
-                            
-                            if (!Commands.ContainsKey(commandName)) Commands[commandName] = new List<ConsoleCommand>();
-                            Commands[commandName].Add(cmd);
-                        }
+                        if (cmd == null) continue;
+                        
+                        string commandName = cmd.Name;
+                        
+                        ParamIdentifier identifier = method.GetCustomAttribute<ParamIdentifier>(); 
+                        ParamDescriptor descriptor = method.GetCustomAttribute<ParamDescriptor>();
+                        
+                        cmd.RegisterMethod(method, identifier, descriptor);
+                        
+                        if (!Commands.ContainsKey(commandName)) Commands[commandName] = new List<ConsoleCommand>(); 
+                        Commands[commandName].Add(cmd);
                     }
                 }
             }
