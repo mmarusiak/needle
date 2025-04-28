@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Needle.Console.Core.Command;
+using UnityEngine;
 
 namespace Needle.Console.Core
 {
@@ -46,7 +47,8 @@ namespace Needle.Console.Core
                 List<ConsoleCommand> cmds = Commands[commandName];
 
                 int i = 0;
-                for (ConsoleCommand cmd = cmds[i]; i < cmds.Count && instance != cmd.Source; cmd = cmds[i++]);
+                for (ConsoleCommand cmd = cmds[i]; i < cmds.Count && instance != cmd.Source; cmd = cmds[++i]);
+                Debug.Log("Unregistered " + i);
                 cmds.RemoveAt(i);
             }
         }
