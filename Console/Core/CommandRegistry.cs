@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Needle.Console.Core.Command;
-using UnityEngine;
 
 namespace Needle.Console.Core
 {
     public static class CommandRegistry
     {
-        private static readonly Dictionary<string, List<ConsoleCommand>> Commands = new();
+        public static readonly Dictionary<string, List<ConsoleCommand>> Commands = new();
 
         public static void RegisterInstance(object instance)
         {
@@ -19,8 +18,6 @@ namespace Needle.Console.Core
             {
                 var cmd = method.GetCustomAttribute<ConsoleCommand>();
                 if (cmd == null) continue;
-                
-                string commandName = cmd.Name;
                             
                 ParamIdentifier identifier = method.GetCustomAttribute<ParamIdentifier>();
                 ParamDescriptor descriptor = method.GetCustomAttribute<ParamDescriptor>();
@@ -28,8 +25,8 @@ namespace Needle.Console.Core
                 cmd.RegisterMethod(method, identifier, descriptor);
                 cmd.RegisterSource(instance);
                             
-                if (!Commands.ContainsKey(commandName)) Commands[commandName] = new List<ConsoleCommand>();
-                Commands[commandName].Add(cmd);
+                if (!Commands.ContainsKey(cmd.Name)) Commands[cmd.Name] = new List<ConsoleCommand>();
+                Commands[cmd.Name].Add(cmd);
             }
         }
 
@@ -43,12 +40,10 @@ namespace Needle.Console.Core
                 var attr = method.GetCustomAttribute<ConsoleCommand>();
                 if (attr == null) continue;
                 
-                string commandName = attr.Name;
-                List<ConsoleCommand> cmds = Commands[commandName];
+                List<ConsoleCommand> cmds = Commands[attr.Name];
 
                 int i = 0;
                 for (ConsoleCommand cmd = cmds[i]; i < cmds.Count && instance != cmd.Source; cmd = cmds[++i]);
-                Debug.Log("Unregistered " + i);
                 cmds.RemoveAt(i);
             }
         }
@@ -64,15 +59,13 @@ namespace Needle.Console.Core
                         var cmd = method.GetCustomAttribute<ConsoleCommand>();
                         if (cmd == null) continue;
                         
-                        string commandName = cmd.Name;
-                        
                         ParamIdentifier identifier = method.GetCustomAttribute<ParamIdentifier>(); 
                         ParamDescriptor descriptor = method.GetCustomAttribute<ParamDescriptor>();
                         
                         cmd.RegisterMethod(method, identifier, descriptor);
                         
-                        if (!Commands.ContainsKey(commandName)) Commands[commandName] = new List<ConsoleCommand>(); 
-                        Commands[commandName].Add(cmd);
+                        if (!Commands.ContainsKey(cmd.Name)) Commands[cmd.Name] = new List<ConsoleCommand>(); 
+                        Commands[cmd.Name].Add(cmd);
                     }
                 }
             }

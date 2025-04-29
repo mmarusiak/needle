@@ -7,6 +7,8 @@ namespace Needle.Console.Core
         void Start()
         {
             CommandRegistry.RegisterStaticCommands();
+            CommandProcessor.RunCommand("hello world", out string[] outcomes);
+            foreach (var outcome in outcomes) Debug.Log(outcome);
         }
     }
 }

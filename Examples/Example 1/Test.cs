@@ -13,9 +13,9 @@ namespace Needle.Examples.Example_1
         [ConsoleCommand("hello", "hello dear dev!")]
         [ParamDescriptor("some test description")]
         [ParamIdentifier("my first parameter")]
-        public static void HelloWorld(string param)
+        public static void HelloWorld()
         {
-            Debug.Log("Hello, " + param);
+            Debug.Log("Hello world!" );
         }
         
         

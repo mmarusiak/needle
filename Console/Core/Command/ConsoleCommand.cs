@@ -29,7 +29,7 @@ namespace Needle.Console.Core.Command
         private void RegisterParameters(ParameterInfo[] parameters, ParamIdentifier identifier, ParamDescriptor descriptor)
         {
             _parameters = new Parameter[parameters.Length];
-            ParameterInfo paramInfo = parameters[0];
+            ParameterInfo paramInfo = parameters.Length != 0 ? parameters[0] : null;
             for (int i = 0; i < parameters.Length; paramInfo = parameters[i++])
             {
                 Assert.IsNotNull(paramInfo, "Param info should not be null!");
@@ -42,5 +42,7 @@ namespace Needle.Console.Core.Command
         public void RegisterSource(object source) => _source = source;
         
         public object Source => _source;
+        public Parameter[] Parameters => _parameters;
+        public MethodInfo Method => _method;
     }
 }
