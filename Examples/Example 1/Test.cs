@@ -4,20 +4,16 @@ using UnityEngine;
 
 namespace Needle.Examples.Example_1
 {
-    public class Test : MonoBehaviour
+    public class Test : NeedleBehaviour
     {
-
-        void OnEnable() => CommandRegistry.RegisterInstance(this);
-        void OnDisable() => CommandRegistry.UnregisterInstance(this);
-        
         [ConsoleCommand("hello", "hello dear dev!")]
         [ParamDescriptor("some test description")]
         [ParamIdentifier("my first parameter")]
-        public static void HelloWorld()
+        public static string HelloWorld()
         {
             Debug.Log("Hello world!" );
+            return "Success";
         }
-        
         
         [ConsoleCommand("echo", "hello dear dev!")]
         [ParamDescriptor("some test description")]
