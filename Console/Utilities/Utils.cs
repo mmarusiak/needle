@@ -1,4 +1,6 @@
+using System;
 using Needle.Console.Logger;
+using TMPro;
 using UnityEngine;
 
 namespace Needle.Console.Utilities
@@ -48,6 +50,22 @@ namespace Needle.Console.Utilities
             }
 
             return dp[a.Length, b.Length];
+        }
+        
+        public static bool TryGetSubstringCharacterRange(TextMeshProUGUI textMesh, string targetSubstring, out int startIndex, out int endIndex)
+        {
+            startIndex = -1;
+            endIndex = -1;
+
+            string fullText = textMesh.text;
+            int substringStart = fullText.IndexOf(targetSubstring, StringComparison.Ordinal);
+
+            if (substringStart == -1)
+                return false;
+
+            startIndex = substringStart;
+            endIndex = startIndex + targetSubstring.Length - 1;
+            return true;
         }
     }
 }

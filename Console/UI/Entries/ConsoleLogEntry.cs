@@ -1,6 +1,6 @@
 using System;
 
-namespace Needle.Console.UI.Entry
+namespace Needle.Console.UI.Entries
 {
     public class ConsoleLogEntry<T> where T : Enum
     {
@@ -18,5 +18,7 @@ namespace Needle.Console.UI.Entry
             Source = source;
             DevContent = devContent;
         }
+
+        public string ToLog(IEntryLogger<T> logger) => logger.EntryToLog(this);
     }
 }
