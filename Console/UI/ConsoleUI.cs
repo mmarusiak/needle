@@ -35,8 +35,9 @@ namespace Needle.Console.UI
             }
         }
 
-        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger)
+        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor)
         {
+            _typeToColor = typeToColor;
             _output = output;
             _entryLogger = entryLogger;
             _output.AddListener(DisplayTooltip);
@@ -70,7 +71,7 @@ namespace Needle.Console.UI
         public void LogInput(string message, object source = null, [CallerMemberName] string memberName = "") => Log(message, _inputType, source, memberName);
 
         protected virtual void DisplayLogs(List<ConsoleLogEntry<T>> logs) =>
-            _output.Text =  string.Join("\n", logs.Select(log => log.ToLog(_entryLogger)));
+            _output.Text =  string.Join("\n", logs.Select(log => log.ToLog(_entryLogger, _typeToColor)));
 
         public void DisplayTooltip(int characterIndex)
         {
@@ -98,6 +99,6 @@ namespace Needle.Console.UI
         }
 
         private void UpdateDictionaryLog(Dictionary<int, ConsoleLogEntry<T>> dictionary, ConsoleLogEntry<T> entry) => 
-            dictionary[DisplayedLogs.Count > 0 ? (DisplayedLogs.Keys.Last() + entry.ToLog(_entryLogger).Length) : entry.ToLog(_entryLogger).Length] = entry;
+            dictionary[DisplayedLogs.Count > 0 ? (DisplayedLogs.Keys.Last() + entry.ToLog(_entryLogger, _typeToColor).Length) : entry.ToLog(_entryLogger, _typeToColor).Length] = entry;
     }
 }

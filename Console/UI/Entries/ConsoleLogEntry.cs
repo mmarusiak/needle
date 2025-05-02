@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Needle.Console.UI.Entries
 {
@@ -19,6 +21,6 @@ namespace Needle.Console.UI.Entries
             DevContent = devContent;
         }
 
-        public string ToLog(IEntryLogger<T> logger) => logger.EntryToLog(this);
+        public string ToLog(IEntryLogger<T> logger, Dictionary<T, Color> typeToColor) => logger.EntryToLog(this, typeToColor);
     }
 }

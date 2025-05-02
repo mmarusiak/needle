@@ -16,7 +16,7 @@ namespace Needle.Console.UI
 
         private readonly List<Action<int>> _hoverActions = new();
 
-        void Start() => textMeshProUGUI = GetComponent<TextMeshProUGUI>();
+        void Awake() => textMeshProUGUI = GetComponent<TextMeshProUGUI>();
 
         public void OnPointerEnter(PointerEventData eventData)
         {
@@ -40,10 +40,11 @@ namespace Needle.Console.UI
         private void CheckHover(Vector2 mousePosition)
         {
             textMeshProUGUI.ForceMeshUpdate();
-            int characterIndex =
+            int visibleCharIndex =
                 TMP_TextUtilities.FindIntersectingCharacter(textMeshProUGUI, mousePosition, null, false);
-            if (characterIndex == -1) return;
-            foreach (var listener in _hoverActions) listener(characterIndex);
+            if (visibleCharIndex == -1) return;
+            TMP_CharacterInfo charInfo = textMeshProUGUI.textInfo.characterInfo[visibleCharIndex];
+            foreach (var listener in _hoverActions) listener(charInfo.index);
         }
 
         public string Text

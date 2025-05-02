@@ -8,14 +8,18 @@ namespace Needle.Console
 {
     public class Needle : MonoBehaviour
     {
-        private Dictionary<MessageType, Color> _colors = new Dictionary<MessageType, Color>();
+        private Dictionary<MessageType, Color> _colors = new ();
         [SerializeField] private IEntryLogger<MessageType> _messageLogger = new NeedleEntryLogger<MessageType>();
         [SerializeField] private LogText output;
 
         private ConsoleUI<MessageType> _console;
         void Start()
         {
-            _console = new ConsoleUI<MessageType>(output, _messageLogger);
+            _colors.Add (MessageType.Info, Color.green);
+            _colors.Add (MessageType.Error, Color.red);
+            _colors.Add (MessageType.Warning, Color.yellow);
+            
+            _console = new ConsoleUI<MessageType>(output, _messageLogger, _colors);
             
             _console.Log("Welcome to the console!");
             _console.Log("some!");
