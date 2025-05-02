@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using Needle.Console.Logger;
 using Needle.Console.UI;
 using Needle.Console.UI.Entries;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Needle.Console
 {
@@ -11,6 +13,7 @@ namespace Needle.Console
         private Dictionary<MessageType, Color> _colors = new ();
         [SerializeField] private IEntryLogger<MessageType> _messageLogger = new NeedleEntryLogger<MessageType>();
         [SerializeField] private LogText output;
+        [FormerlySerializedAs("_tooltip")] [SerializeField] private TextMeshProUGUI tooltip;
 
         private ConsoleUI<MessageType> _console;
         void Start()
@@ -19,7 +22,7 @@ namespace Needle.Console
             _colors.Add (MessageType.Error, Color.red);
             _colors.Add (MessageType.Warning, Color.yellow);
             
-            _console = new ConsoleUI<MessageType>(output, _messageLogger, _colors);
+            _console = new ConsoleUI<MessageType>(output, _messageLogger, _colors, tooltip);
             
             _console.Log("Welcome to the console!");
             _console.Log("some!");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Needle.Console.UI.Entries;
+using TMPro;
 using UnityEngine;
 
 namespace Needle.Console.UI
@@ -16,6 +17,7 @@ namespace Needle.Console.UI
         
         private Dictionary<T, Color> _typeToColor;
         private LogText _output;
+        private TextMeshProUGUI _tooltip;
 
         private T[] _filters;
         
@@ -35,12 +37,14 @@ namespace Needle.Console.UI
             }
         }
 
-        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor)
+        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, TextMeshProUGUI tooltip)
         {
             _typeToColor = typeToColor;
             _output = output;
             _entryLogger = entryLogger;
-            _output.AddListener(DisplayTooltip);
+            _tooltip = tooltip;
+            _output.AddHoverListener(DisplayTooltip);
+            _output.AddQuitHoverListener(HideTooltip);
         }
 
         public T[] Filters
@@ -80,12 +84,19 @@ namespace Needle.Console.UI
             int[] keys = _displayedLogs.Keys.ToArray();
             int target = keys[0];
             for (int i = 0; characterIndex > target; target = keys[++i]) ;
+            var targetLog = _displayedLogs[target];
             
-            UnityEngine.Debug.Log(characterIndex);
-            UnityEngine.Debug.Log(target);
-            UnityEngine.Debug.Log(_displayedLogs[target].Content);
+            _tooltip.gameObject.SetActive(true);
+            // adjust pos of tooltip to mouse pos
+            _tooltip.transform.position = Input.mousePosition - Vector3.up * _tooltip.rectTransform.sizeDelta.y / 1.5f;
+#if UNITY_EDITOR
+            _tooltip.text = String.Join("\n", _entryLogger.DevTooltip(targetLog, _typeToColor));
+#else
+            _tooltip.text = String.Join("\n", _entryLogger.PlayerTooltip(targetLog));
+#endif
         }
         
+        public void HideTooltip() => _tooltip.gameObject.SetActive(false);
         
         public void FilterBy(T[] filters)
         {

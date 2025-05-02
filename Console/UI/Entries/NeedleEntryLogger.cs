@@ -11,5 +11,20 @@ namespace Needle.Console.UI.Entries
             Color color = typeToColor.TryGetValue(logEntry.MessageType, out var value) ? value : Color.white;
             return Utilities.Utils.ColorizeText($"[{logEntry.MessageType}]", color) + $": {logEntry.Content}";
         }
+
+        public string[] PlayerTooltip(ConsoleLogEntry<T> logEntry, Dictionary<T, Color> typeToColor)
+        {
+            return new string[] {""};
+        }
+
+        public string[] DevTooltip(ConsoleLogEntry<T> logEntry, Dictionary<T, Color> typeToColor)
+        {
+            return new string[]
+            {
+                $"Sent on: {logEntry.Timestamp}",
+                $"Sent from: {logEntry.Source}, {logEntry.DevContent}",
+                $"Additional call trace - to do:"
+            };
+        }
     }
 }
