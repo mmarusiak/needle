@@ -18,9 +18,9 @@ namespace Needle.Examples.Example_1
         [ConsoleCommand("echo", "hello dear dev!")]
         [ParamDescriptor("some test description")]
         [ParamIdentifier("my first parameter")]
-        public void Echo(string param)
+        public string Echo(string param)
         {
-            Debug.Log(param);
+            return param;
         }
     }
 }

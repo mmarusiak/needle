@@ -33,6 +33,8 @@ namespace Needle.Console
             _console.Log("Welcome txso 12the console!");
             _console.Log("Welcome to 3213213312the console!");
         }
+        
+        public void HandleInput(string input) => _console.HandleInput(input);
 
         public void DummyLog()
         {

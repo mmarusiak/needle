@@ -4,19 +4,19 @@ namespace Needle.Console.Core.Command
 {
     public class Parameter
     {
-        private ParameterInfo _info;
-        private string _name;
-        private string _description;
-        private bool _required;
+        public ParameterInfo Info { get; }
+        public string Name { get; }
+        public string Description { get; }
+        public bool Required { get; }
 
         public Parameter(ParameterInfo info, string description): this (info, info.Name, description) { }
 
         public Parameter(ParameterInfo info, string name, string description)
         {
-            _info = info;
-            _name = name;
-            _description = description;
-            _required = !info.HasDefaultValue;
+            Info = info;
+            Name = name;
+            Description = description;
+            Required = !info.HasDefaultValue;
         }
     }
 }

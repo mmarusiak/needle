@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Needle.Console.Core;
 using Needle.Console.UI.Entries;
 using TMPro;
 using UnityEngine;
@@ -23,6 +24,7 @@ namespace Needle.Console.UI
 
         private T[] _filters;
         
+        // to do - associate types
         private T _infoType;
         private T _warningType;
         private T _errorType;
@@ -47,6 +49,7 @@ namespace Needle.Console.UI
             _tooltip = tooltip;
             _output.AddHoverListener(DisplayTooltip);
             _output.AddQuitHoverListener(HideTooltip);
+            CommandRegistry.RegisterStaticCommands();
         }
 
         public T[] Filters
@@ -78,6 +81,13 @@ namespace Needle.Console.UI
 
         protected virtual void DisplayLogs(List<ConsoleLogEntry<T>> logs) =>
             _output.Text =  string.Join("\n", logs.Select(log => log.ToLog(_entryLogger, _typeToColor)));
+
+        public void HandleInput(string input)
+        {
+            LogInput(input);
+            T commandType = CommandProcessor.RunCommand(input, out string[] output) ? _infoType : _errorType;
+            foreach (string outmsg in output) Log(outmsg, commandType, this);
+        }
 
         public void DisplayTooltip(int characterIndex)
         {
