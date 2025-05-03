@@ -13,7 +13,7 @@ namespace Needle.Console
         private Dictionary<MessageType, Color> _colors = new ();
         [SerializeField] private IEntryLogger<MessageType> _messageLogger = new NeedleEntryLogger<MessageType>();
         [SerializeField] private LogText output;
-        [FormerlySerializedAs("_tooltip")] [SerializeField] private TextMeshProUGUI tooltip;
+        [FormerlySerializedAs("_tooltip")] [SerializeField] private ConsoleTooltip tooltip;
 
         private ConsoleUI<MessageType> _console;
         void Start()
@@ -32,6 +32,11 @@ namespace Needle.Console
             _console.Log("Welcome 21213to the console!");
             _console.Log("Welcome txso 12the console!");
             _console.Log("Welcome to 3213213312the console!");
+        }
+
+        public void DummyLog()
+        {
+            _console.Log("Dummy log");
         }
     }
 }

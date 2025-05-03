@@ -67,5 +67,20 @@ namespace Needle.Console.Utilities
             endIndex = startIndex + targetSubstring.Length - 1;
             return true;
         }
+        public static int GetNearestCharacterWithMaxDistance(TextMeshProUGUI textMeshProUGUI, Vector3 mousePosition, float maxDistance)
+        {
+            int nearestCharIndex = TMP_TextUtilities.FindNearestCharacter(textMeshProUGUI, mousePosition, null, false);
+            if (nearestCharIndex == -1) return -1;
+            // Get the world position of the character's center bounding box
+            Vector3 charCenterBottom = (textMeshProUGUI.textInfo.characterInfo[nearestCharIndex].bottomLeft +
+                                        textMeshProUGUI.textInfo.characterInfo[nearestCharIndex].topRight) / 2;
+            Vector3 charWorldPosition = textMeshProUGUI.transform.TransformPoint(charCenterBottom);
+            // Calculate the distance from the mouse position to the character
+            float distance = Vector3.Distance(mousePosition, charWorldPosition);
+            // If the distance is greater than maxDistance, return -1 (no valid character)
+            if (distance > maxDistance) return -1;
+            // Return the index of the nearest character within the max distance
+            return nearestCharIndex;
+        }
     }
 }

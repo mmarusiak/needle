@@ -10,6 +10,8 @@ namespace Needle.Console.UI
 {
     public class ConsoleUI<T> where T : Enum
     {
+        public static bool DeveloperMode = true;
+        
         private IEntryLogger<T> _entryLogger;
         
         private readonly List<ConsoleLogEntry<T>> _logs = new ();
@@ -17,7 +19,7 @@ namespace Needle.Console.UI
         
         private Dictionary<T, Color> _typeToColor;
         private LogText _output;
-        private TextMeshProUGUI _tooltip;
+        private ConsoleTooltip _tooltip;
 
         private T[] _filters;
         
@@ -37,7 +39,7 @@ namespace Needle.Console.UI
             }
         }
 
-        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, TextMeshProUGUI tooltip)
+        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, ConsoleTooltip tooltip)
         {
             _typeToColor = typeToColor;
             _output = output;
@@ -79,21 +81,33 @@ namespace Needle.Console.UI
 
         public void DisplayTooltip(int characterIndex)
         {
-            UnityEngine.Debug.Log(characterIndex);
-
             int[] keys = _displayedLogs.Keys.ToArray();
             int target = keys[0];
-            for (int i = 0; characterIndex > target; target = keys[++i]) ;
+            for (int i = 1; i < keys.Length && characterIndex > target; target = keys[i++]) ;
             var targetLog = _displayedLogs[target];
             
-            _tooltip.gameObject.SetActive(true);
             // adjust pos of tooltip to mouse pos
-            _tooltip.transform.position = Input.mousePosition - Vector3.up * _tooltip.rectTransform.sizeDelta.y / 1.5f;
-#if UNITY_EDITOR
-            _tooltip.text = String.Join("\n", _entryLogger.DevTooltip(targetLog, _typeToColor));
-#else
-            _tooltip.text = String.Join("\n", _entryLogger.PlayerTooltip(targetLog));
-#endif
+            _tooltip.transform.position = Input.mousePosition - Vector3.up * _tooltip.RectTransform.sizeDelta.y / 1.25f;
+
+            if (DeveloperMode && _entryLogger.DevTooltip(targetLog, _typeToColor) != null)
+            {
+                _tooltip.SetHeader("Dev tooltip");
+                _tooltip.SetTooltip(String.Join("\n", _entryLogger.DevTooltip(targetLog, _typeToColor)));
+            }
+            
+            else if (!DeveloperMode && _entryLogger.PlayerTooltip(targetLog, _typeToColor) != null)
+            {
+                _tooltip.SetHeader("Additional info");
+                _tooltip.SetTooltip(String.Join("\n", _entryLogger.PlayerTooltip(targetLog, _typeToColor)));
+            }
+            else
+            {
+                // we don't want to see tooltip if return value is null.
+                _tooltip.gameObject.SetActive(false);
+                return;
+            }
+
+            _tooltip.gameObject.SetActive(true);
         }
         
         public void HideTooltip() => _tooltip.gameObject.SetActive(false);

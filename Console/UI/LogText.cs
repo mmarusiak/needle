@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Needle.Console.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -39,8 +40,7 @@ namespace Needle.Console.UI
         private void CheckHover(Vector2 mousePosition)
         {
             _textMeshProUGUI.ForceMeshUpdate();
-            int visibleCharIndex =
-                TMP_TextUtilities.FindIntersectingCharacter(_textMeshProUGUI, mousePosition, null, false);
+            int visibleCharIndex = Utils.GetNearestCharacterWithMaxDistance(_textMeshProUGUI, mousePosition, 10);
             if (visibleCharIndex == -1)
             {
                 foreach (var action in _onQuitHoverActions) action();
@@ -54,7 +54,12 @@ namespace Needle.Console.UI
         public string Text
         {
             get => _textMeshProUGUI.text;
-            set => _textMeshProUGUI.text = value;
+            set
+            {
+                _textMeshProUGUI.text = value;
+                if (_textMeshProUGUI.rectTransform.sizeDelta.y > _textMeshProUGUI.preferredHeight) return;
+                _textMeshProUGUI.rectTransform.sizeDelta = new Vector2(_textMeshProUGUI.rectTransform.sizeDelta.x, _textMeshProUGUI.preferredHeight);
+            }
         }
 
         public void AddHoverListener(Action<int> listener) => _onHoverActions.Add(listener);
