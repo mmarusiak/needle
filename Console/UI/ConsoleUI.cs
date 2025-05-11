@@ -152,6 +152,7 @@ namespace Needle.Console.UI
             // it will be -1 if we hit list length
             while (i.Max() != -1)
             {
+                UnityEngine.Debug.Log(String.Join(", ", i));
                 ConsoleLogEntry<T> earliestLog = null;
                 int earliestIndex = -1;
                 for (int j = 0; j < i.Length; j++)
@@ -164,20 +165,19 @@ namespace Needle.Console.UI
                         earliestIndex = j;
                     }
                 }
-
-                if (i[earliestIndex] != -1)
-                {
-                    i[earliestIndex]++;
-                    if (_logs[filters[earliestIndex]].Count <= i[earliestIndex]) i[earliestIndex] = -1;
-                }
-
+                
+                i[earliestIndex]++; 
+                if (_logs[filters[earliestIndex]].Count <= i[earliestIndex]) i[earliestIndex] = -1;
+                
+                UnityEngine.Debug.Log(earliestLog.Content);
                 UpdateDictionaryLog(filtered, earliestLog);
             }
             
             DisplayedLogs = filtered;
+            UnityEngine.Debug.Log(DisplayedLogs.Values.ToList().Count);
         }
 
         private void UpdateDictionaryLog(Dictionary<int, ConsoleLogEntry<T>> dictionary, ConsoleLogEntry<T> entry) => 
-            dictionary[DisplayedLogs.Count > 0 ? (DisplayedLogs.Keys.Last() + entry.ToLog(_entryLogger, _typeToColor).Length) : entry.ToLog(_entryLogger, _typeToColor).Length] = entry;
+            dictionary[dictionary.Count > 0 ? (dictionary.Keys.Last() + entry.ToLog(_entryLogger, _typeToColor).Length) : entry.ToLog(_entryLogger, _typeToColor).Length] = entry;
     }
 }

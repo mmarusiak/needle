@@ -24,6 +24,7 @@ namespace Needle.Console.UI.Entries
         {
             return new string[]
             {
+                $"Content: {logEntry.Content}",
                 $"Sent on: {logEntry.Timestamp}",
                 $"Sent from: {logEntry.Source}, {logEntry.DevContent}",
                 $"Additional call trace - to do:"
