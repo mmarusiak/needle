@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Needle.Console.Utilities;
 
 namespace Needle.Console.UI.Entries
 {
@@ -9,7 +10,7 @@ namespace Needle.Console.UI.Entries
         public string EntryToLog(ConsoleLogEntry<T> logEntry, Dictionary<T, Color> typeToColor)
         {
             Color color = typeToColor.TryGetValue(logEntry.MessageType, out var value) ? value : Color.white;
-            return Utilities.Utils.ColorizeText($"[{logEntry.MessageType}]", color) + $": {logEntry.Content}";
+            return Utils.ItalizeText(Utils.ColorizeText($"[{logEntry.MessageType}]", color)) + $": {logEntry.Content}";
         }
 
         public string[] PlayerTooltip(ConsoleLogEntry<T> logEntry, Dictionary<T, Color> typeToColor)

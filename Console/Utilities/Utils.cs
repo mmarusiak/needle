@@ -83,7 +83,6 @@ namespace Needle.Console.Utilities
             return nearestCharIndex;
         }
         
-        
         public static int CountSubstringInString(string source, string substring) =>
             source.Length - source.Replace(substring, "").Length;
     }

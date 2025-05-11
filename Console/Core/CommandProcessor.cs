@@ -51,6 +51,7 @@ namespace Needle.Console.Core
         // TO DO!!!
         private static bool ParseParameters(string entryArgs, Parameter[] parameters, out object[] result, out string error)
         {
+            // how to parse vectors/colors other types?
             string[] args = GetArgs(entryArgs);
             List<object> outArgs = new List<object>();
             for (int i = 0; i < parameters.Length; i++)

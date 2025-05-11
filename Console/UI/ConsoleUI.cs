@@ -6,6 +6,7 @@ using Needle.Console.Core;
 using Needle.Console.UI.Entries;
 using TMPro;
 using UnityEngine;
+using Needle.Console.Utilities;
 
 namespace Needle.Console.UI
 {
@@ -25,11 +26,11 @@ namespace Needle.Console.UI
         private T[] _filters;
         
         // to do - associate types
-        private T _infoType;
-        private T _warningType;
-        private T _errorType;
-        private T _debugType;
-        private T _inputType;
+        private readonly T _infoType;
+        private readonly T _warningType;
+        private readonly T _errorType;
+        private readonly T _debugType;
+        private readonly T _inputType;
         
         public Dictionary<int, ConsoleLogEntry<T>> DisplayedLogs
         {
@@ -41,7 +42,8 @@ namespace Needle.Console.UI
             }
         }
 
-        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, ConsoleTooltip tooltip)
+        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, ConsoleTooltip tooltip, 
+            T infoType = default, T warningType = default, T errorType = default, T debugType = default, T inputType = default)
         {
             _typeToColor = typeToColor;
             _output = output;
@@ -49,6 +51,14 @@ namespace Needle.Console.UI
             _tooltip = tooltip;
             _output.AddHoverListener(DisplayTooltip);
             _output.AddQuitHoverListener(HideTooltip);
+            // set default message types
+            _infoType = infoType;
+            _warningType = warningType;
+            _errorType = errorType;
+            _debugType = debugType;
+            _inputType = inputType;
+            _debugType = errorType;
+            _inputType = inputType;
             CommandRegistry.RegisterStaticCommands();
         }
 

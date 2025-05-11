@@ -22,7 +22,7 @@ namespace Needle.Console
             _colors.Add (MessageType.Error, Color.red);
             _colors.Add (MessageType.Warning, Color.yellow);
             
-            _console = new ConsoleUI<MessageType>(output, _messageLogger, _colors, tooltip);
+            _console = new ConsoleUI<MessageType>(output, _messageLogger, _colors, tooltip, MessageType.Info, MessageType.Warning, MessageType.Error, MessageType.Debug, MessageType.UserInput);
             
             _console.Log("Welcome to the console!");
             _console.Log("some!");
