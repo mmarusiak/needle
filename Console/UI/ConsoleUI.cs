@@ -57,8 +57,6 @@ namespace Needle.Console.UI
             _errorType = errorType;
             _debugType = debugType;
             _inputType = inputType;
-            _debugType = errorType;
-            _inputType = inputType;
             CommandRegistry.RegisterStaticCommands();
         }
 
@@ -74,7 +72,7 @@ namespace Needle.Console.UI
 
         public void Log(string message, T type, object source = null, [CallerMemberName] string memberName = "")
         {
-            ConsoleLogEntry<T> logEntry = new ConsoleLogEntry<T>(type, message, DateTime.Now, source, memberName);
+            ConsoleLogEntry<T> logEntry = new ConsoleLogEntry<T>(type, message, DateTime.Now, source, memberName, type.Equals(_inputType));
             
             _logs.Add(logEntry);
             

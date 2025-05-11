@@ -10,6 +10,8 @@ namespace Needle.Console.UI.Entries
         public string EntryToLog(ConsoleLogEntry<T> logEntry, Dictionary<T, Color> typeToColor)
         {
             Color color = typeToColor.TryGetValue(logEntry.MessageType, out var value) ? value : Color.white;
+            
+            if (logEntry.IsInput) return Utils.ItalizeText(Utils.ColorizeText($"> {logEntry.Content}", color));
             return Utils.ItalizeText(Utils.ColorizeText($"[{logEntry.MessageType}]", color)) + $": {logEntry.Content}";
         }
 

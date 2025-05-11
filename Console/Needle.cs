@@ -16,22 +16,20 @@ namespace Needle.Console
         [FormerlySerializedAs("_tooltip")] [SerializeField] private ConsoleTooltip tooltip;
 
         private ConsoleUI<MessageType> _console;
-        void Start()
+        private void Start()
         {
-            _colors.Add (MessageType.Info, Color.green);
-            _colors.Add (MessageType.Error, Color.red);
-            _colors.Add (MessageType.Warning, Color.yellow);
+            _colors.Add (MessageType.Info, NeedleColors.Colors[0]);
+            _colors.Add (MessageType.Warning, NeedleColors.Colors[1]);
+            _colors.Add (MessageType.Error, NeedleColors.Colors[2]);
+            _colors.Add (MessageType.Debug, NeedleColors.Colors[3]);
+            _colors.Add (MessageType.UserInput, NeedleColors.Colors[4]);
             
             _console = new ConsoleUI<MessageType>(output, _messageLogger, _colors, tooltip, MessageType.Info, MessageType.Warning, MessageType.Error, MessageType.Debug, MessageType.UserInput);
             
             _console.Log("Welcome to the console!");
-            _console.Log("some!");
-            _console.Log("nvm!");
-            _console.Log("Welcome t32131o the console!");
-            _console.Log("Welcome 213t32o the console!");
-            _console.Log("Welcome 21213to the console!");
-            _console.Log("Welcome txso 12the console!");
-            _console.Log("Welcome to 3213213312the console!");
+            _console.Warning("Warning");
+            _console.Error("Error");
+            _console.Debug("Debug");
         }
         
         public void HandleInput(string input) => _console.HandleInput(input);

@@ -12,13 +12,16 @@ namespace Needle.Console.UI.Entries
         public DateTime Timestamp { get; }
         public object Source { get; }
 
-        public ConsoleLogEntry(T messageType, string content, DateTime timestamp, object source, string devContent)
+        public bool IsInput { get; }
+
+        public ConsoleLogEntry(T messageType, string content, DateTime timestamp, object source, string devContent, bool isInput = false)
         {
             MessageType = messageType;
             Content = content;
             Timestamp = timestamp;
             Source = source;
             DevContent = devContent;
+            IsInput = isInput;
         }
 
         public string ToLog(IEntryLogger<T> logger, Dictionary<T, Color> typeToColor) => logger.EntryToLog(this, typeToColor);
