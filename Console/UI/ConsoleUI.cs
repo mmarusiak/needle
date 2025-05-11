@@ -16,9 +16,6 @@ namespace Needle.Console.UI
         
         private IEntryLogger<T> _entryLogger;
         
-        private readonly List<ConsoleLogEntry<T>> _logs = new ();
-        private Dictionary<int, ConsoleLogEntry<T>> _displayedLogs = new ();
-        
         private Dictionary<T, Color> _typeToColor;
         private LogText _output;
         private ConsoleTooltip _tooltip;
@@ -31,6 +28,9 @@ namespace Needle.Console.UI
         private readonly T _errorType;
         private readonly T _debugType;
         private readonly T _inputType;
+
+        private readonly Dictionary<T, List<ConsoleLogEntry<T>>> _logs = new();
+        private Dictionary<int, ConsoleLogEntry<T>> _displayedLogs = new ();
         
         public Dictionary<int, ConsoleLogEntry<T>> DisplayedLogs
         {
@@ -74,11 +74,17 @@ namespace Needle.Console.UI
         {
             ConsoleLogEntry<T> logEntry = new ConsoleLogEntry<T>(type, message, DateTime.Now, source, memberName, type.Equals(_inputType));
             
-            _logs.Add(logEntry);
+            AddLog(logEntry);
             
             if (_filters != null && !_filters.Contains(type)) return;
             UpdateDictionaryLog(_displayedLogs, logEntry);
             DisplayLogs(_displayedLogs.Values.ToList());
+        }
+
+        private void AddLog(ConsoleLogEntry<T> logEntry)
+        {
+            if (!_logs.ContainsKey(logEntry.MessageType)) _logs.Add(logEntry.MessageType, new List<ConsoleLogEntry<T>>());
+            _logs[logEntry.MessageType].Add(logEntry);
         }
 
         public void Log(string message, object source = null, [CallerMemberName] string memberName = "") => Log(message, _infoType, source, memberName);
@@ -132,10 +138,40 @@ namespace Needle.Console.UI
         
         public void FilterBy(T[] filters)
         {
+            filters = filters.Where(filter => _logs.ContainsKey(filter)).ToArray();
+            
             Dictionary<int, ConsoleLogEntry<T>> filtered = new();
-            foreach (var log in _logs)
+            int[] i = new int[filters.Length];
+            
+            if (filters.Length == 0)
             {
-                if (filters.Contains(log.MessageType)) UpdateDictionaryLog(filtered, log);
+                DisplayedLogs = filtered;
+                return;
+            }
+            
+            // it will be -1 if we hit list length
+            while (i.Max() != -1)
+            {
+                ConsoleLogEntry<T> earliestLog = null;
+                int earliestIndex = -1;
+                for (int j = 0; j < i.Length; j++)
+                {
+                    if (i[j] == -1) continue;
+                    var typeLog = _logs[filters[j]][i[j]];
+                    if (earliestLog == null || earliestLog.Timestamp.CompareTo(typeLog) > 0)
+                    {
+                        earliestLog = typeLog;
+                        earliestIndex = j;
+                    }
+                }
+
+                if (i[earliestIndex] != -1)
+                {
+                    i[earliestIndex]++;
+                    if (_logs[filters[earliestIndex]].Count <= i[earliestIndex]) i[earliestIndex] = -1;
+                }
+
+                UpdateDictionaryLog(filtered, earliestLog);
             }
             
             DisplayedLogs = filtered;

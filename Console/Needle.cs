@@ -38,5 +38,13 @@ namespace Needle.Console
         {
             _console.Log("Dummy log");
         }
+
+        public void RandomFiler()
+        {
+            var filter = (MessageType) Random.Range(0, (int) MessageType.UserInput + 1);
+            MessageType[] filters = {filter};
+            _console.FilterBy(filters);
+            _console.Log($"Random filter applied: {filters[0]}", filters[0]);
+        }
     }
 }
