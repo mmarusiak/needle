@@ -26,6 +26,15 @@ namespace Needle.Console.Core.Command
             RegisterParameters(method.GetParameters(), identifier, descriptor);
         }
 
+        // let's say that our parameter is some custom class
+        // f.e. Vector3
+        // it means that there is no simple way to convert "generic" type to custom class
+        // what we want to do:
+        // check if there is "CommandConstructor" - if no, take *some* default constructor - with min params?
+        // then get all params from constructor and parse them as new parameters for function
+        // then when parsing we want to detect that those parameters are for creating special not generic type
+        // void Test(Vector3 param) => void TestPacker(float x, float y, float z) [maybe get constructor with max parameters? or register all candidates and check the correct one?]
+        // => TestPacker calls Test(new(x, y, z))
         private void RegisterParameters(ParameterInfo[] parameters, ParamIdentifier identifier, ParamDescriptor descriptor)
         {
             _parameters = new Parameter[parameters.Length];

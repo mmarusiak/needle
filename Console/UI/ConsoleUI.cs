@@ -41,6 +41,16 @@ namespace Needle.Console.UI
                 DisplayLogs(DisplayedLogs.Values.ToList());
             }
         }
+        
+        public T[] Filters
+        {
+            get => _filters;
+            set
+            {
+                _filters = value;
+                FilterBy(_filters);
+            }
+        }
 
         public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, ConsoleTooltip tooltip, 
             T infoType = default, T warningType = default, T errorType = default, T debugType = default, T inputType = default)
@@ -60,16 +70,6 @@ namespace Needle.Console.UI
             CommandRegistry.RegisterStaticCommands();
         }
 
-        public T[] Filters
-        {
-            get => _filters;
-            set
-            {
-                _filters = value;
-                FilterBy(_filters);
-            }
-        }
-
         public void Log(string message, T type, object source = null, [CallerMemberName] string memberName = "")
         {
             ConsoleLogEntry<T> logEntry = new ConsoleLogEntry<T>(type, message, DateTime.Now, source, memberName, type.Equals(_inputType));
@@ -77,6 +77,7 @@ namespace Needle.Console.UI
             AddLog(logEntry);
             
             if (_filters != null && !_filters.Contains(type)) return;
+            UnityEngine.Debug.Log(_filters?.Contains(type));
             UpdateDictionaryLog(_displayedLogs, logEntry);
             DisplayLogs(_displayedLogs.Values.ToList());
         }
@@ -139,6 +140,7 @@ namespace Needle.Console.UI
         public void FilterBy(T[] filters)
         {
             filters = filters.Where(filter => _logs.ContainsKey(filter)).ToArray();
+            _filters = filters;
             
             Dictionary<int, ConsoleLogEntry<T>> filtered = new();
             int[] i = new int[filters.Length];
