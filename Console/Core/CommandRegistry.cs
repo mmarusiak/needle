@@ -9,6 +9,8 @@ namespace Needle.Console.Core
     {
         public static readonly Dictionary<string, List<ConsoleCommand>> Commands = new();
 
+        // register parameters better!!! 
+        
         public static void RegisterInstance(object instance)
         {
             Type type = instance.GetType();
