@@ -77,7 +77,6 @@ namespace Needle.Console.UI
             AddLog(logEntry);
             
             if (_filters != null && !_filters.Contains(type)) return;
-            UnityEngine.Debug.Log(_filters?.Contains(type));
             UpdateDictionaryLog(_displayedLogs, logEntry);
             DisplayLogs(_displayedLogs.Values.ToList());
         }

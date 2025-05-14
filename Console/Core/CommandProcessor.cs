@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Needle.Console.Core.Command;
 using Needle.Console.Utilities;
 using UnityEngine;
@@ -10,22 +11,55 @@ namespace Needle.Console.Core
 {
     public class CommandProcessor
     {
+        // TO DO: 
+        // here add [] object indentifier
         public static bool RunCommand(string entry, out string[] output)
         {
             string[] entries = entry.Split(' ');
-            if (!CommandRegistry.Commands.ContainsKey(entries[0]))
+            int paramsOffset = entries[0].Length + 1;
+            if (!CommandRegistry.Commands.ContainsKey(entries[0]) || CommandRegistry.Commands[entries[0]].Count == 0)
             {
                 output = new []{"Command not found"};
                 return false;
             }
-            List<ConsoleCommand> cmds = CommandRegistry.Commands.GetValueOrDefault(entries[0]);
+            // bad looking clone...
+            List<ConsoleCommand> cmds = CommandRegistry.Commands.GetValueOrDefault(entries[0]).ToArray<ConsoleCommand>().ToList();
             output = new string[cmds.Count];
+            // [] object identifier
+            Match objectExpression = Regex.Match(String.Join(' ', entries[1..]), @"^\[([^\]]+)\]");
+            if (objectExpression.Success)
+            {
+                string[] names = GetArgs(objectExpression.Groups[1].Value.ToLower());
+                bool statics = names.Contains("static");
+                bool runtime = names.Contains("runtime");
+
+                int i = 0;
+                while (i < cmds.Count)
+                {
+                    var c = cmds[i];
+                    if (c.Source == null && !statics || c.Source != null && !runtime &&
+                        !names.Contains((c.Source as MonoBehaviour)?.gameObject.name.ToLower()))
+                    {
+                        cmds.Remove(c);
+                        continue;
+                    }
+
+                    i++;
+                }
+                paramsOffset += objectExpression.Groups[0].Value.Length + 1;
+            }
+
+            if (cmds.Count == 0)
+            {
+                output = new []{$"Command for {objectExpression.Groups[1].Value} not found"};
+                return false;
+            }
             
             ConsoleCommand cmd = cmds[0];
             for (int i = 0; i < cmds.Count; cmd = cmds[i++])
             {
                 Assert.IsNotNull(cmd, "cmd should not be null!");
-                var argToParse = entries[0].Length + 1 <= entry.Length ? entry[(entries[0].Length + 1)..] : null;
+                var argToParse = entries[0].Length + 1 <= entry.Length ? entry[paramsOffset..] : null;
                 if (ParseParameters(argToParse, cmd.Parameters, out object[] outArgs, out string error))
                 {
                     try
