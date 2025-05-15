@@ -14,6 +14,12 @@ namespace Needle.Examples.Example_1
             Debug.Log("Hello world!" );
             return "Success";
         }
+
+        [ConsoleCommand("echo", "echo but static")]
+        public static string StaticEcho(string text)
+        {
+            return $"static: {text}";
+        }
         
         [ConsoleCommand("echo", "hello dear dev!")]
         [ParamDescriptor("some test description")]

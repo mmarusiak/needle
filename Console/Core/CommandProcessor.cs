@@ -12,7 +12,7 @@ namespace Needle.Console.Core
     public class CommandProcessor
     {
         // TO DO: 
-        // here add [] object indentifier
+        // here add [] object identifier
         public static bool RunCommand(string entry, out string[] output)
         {
             string[] entries = entry.Split(' ');
@@ -24,7 +24,6 @@ namespace Needle.Console.Core
             }
             // bad looking clone...
             List<ConsoleCommand> cmds = CommandRegistry.Commands.GetValueOrDefault(entries[0]).ToArray<ConsoleCommand>().ToList();
-            output = new string[cmds.Count];
             // [] object identifier
             Match objectExpression = Regex.Match(String.Join(' ', entries[1..]), @"^\[([^\]]+)\]");
             if (objectExpression.Success)
@@ -33,10 +32,10 @@ namespace Needle.Console.Core
                 bool statics = names.Contains("static");
                 bool runtime = names.Contains("runtime");
 
-                int i = 0;
-                while (i < cmds.Count)
+                int j = 0;
+                while (j < cmds.Count)
                 {
-                    var c = cmds[i];
+                    var c = cmds[j];
                     if (c.Source == null && !statics || c.Source != null && !runtime &&
                         !names.Contains((c.Source as MonoBehaviour)?.gameObject.name.ToLower()))
                     {
@@ -44,7 +43,7 @@ namespace Needle.Console.Core
                         continue;
                     }
 
-                    i++;
+                    j++;
                 }
                 paramsOffset += objectExpression.Groups[0].Value.Length + 1;
             }
@@ -55,8 +54,9 @@ namespace Needle.Console.Core
                 return false;
             }
             
-            ConsoleCommand cmd = cmds[0];
-            for (int i = 0; i < cmds.Count; cmd = cmds[i++])
+            output = new string[cmds.Count];
+            int i = 0;
+            foreach(var cmd in cmds)
             {
                 Assert.IsNotNull(cmd, "cmd should not be null!");
                 var argToParse = entries[0].Length + 1 <= entry.Length ? entry[paramsOffset..] : null;
@@ -65,7 +65,7 @@ namespace Needle.Console.Core
                     try
                     {
                         var outcome = cmd.Method.Invoke(cmd.Source, outArgs);
-                        output[i] = cmd.Method.ReturnType == typeof(void) ? "Method was called!" : outcome.ToString();
+                        output[i++] = cmd.Method.ReturnType == typeof(void) ? "Method was called!" : outcome.ToString();
                     }
                     catch (Exception ex)
                     {
@@ -88,7 +88,6 @@ namespace Needle.Console.Core
             // how to parse vectors/colors other types?
             string[] args = GetArgs(entryArgs);
             List<object> outArgs = new List<object>();
-            int argIndex = 0;
             for (int i = 0; i < parameters.Length; i++)
             {
                 var param = parameters[i];
@@ -124,7 +123,7 @@ namespace Needle.Console.Core
             if (rawArgs == null) return Array.Empty<string>();
             List<string> args = rawArgs.Split(' ').ToList();
             int count = Utils.CountSubstringInString(rawArgs, "\"");
-            // getting args in " 
+            // getting args in " "
             for (int i = 0; i < args.Count && count >= 2; i++)
             {
                 if (!args[i].StartsWith("\"")) continue;
