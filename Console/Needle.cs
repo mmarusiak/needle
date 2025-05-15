@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Needle.Console.Logger;
 using Needle.Console.UI;
 using Needle.Console.UI.Entries;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 

@@ -11,7 +11,7 @@ namespace Needle.Console.Core.Command
         private object _source;
         public string Name { get; }
         public string Description { get; }
-        private Parameter[] _parameters = null;
+        private Parameter[] _parameters;
         private MethodInfo _method;
 
         public ConsoleCommand(string name, string description)
@@ -27,7 +27,7 @@ namespace Needle.Console.Core.Command
         }
 
         // TO DO:
-        // 1. Add object name to function caller - by default it will be called to all object
+        // [1 X - done]. Add object name to function caller - by default it will be called to all object
         // why? if dev wants to call command only for some objects with specified name
         // STATIC/RUNTIME keywords
         // move [player] 10, 10, 20 => means calling move only on player game object by some params
