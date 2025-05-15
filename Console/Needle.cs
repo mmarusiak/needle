@@ -1,118 +1,50 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Needle.Console.Logger;
-using Needle.Console.MethodsHandler;
-using Needle.Console.Utilities;
+using Needle.Console.UI;
+using Needle.Console.UI.Entries;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 namespace Needle.Console
 {
-    public class NeedleConsole : MonoBehaviour
+    public class Needle : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI output;
-        [SerializeField] private ScrollRect scrollRect;
-        [SerializeField] private List<TextMeshProUGUI> suggestionsUI = new();
+        private Dictionary<MessageType, Color> _colors = new ();
+        [SerializeField] private IEntryLogger<MessageType> _messageLogger = new NeedleEntryLogger<MessageType>();
+        [SerializeField] private LogText output;
+        [FormerlySerializedAs("_tooltip")] [SerializeField] private ConsoleTooltip tooltip;
 
-        private List<string> _currentSuggestions = new ();
-            
-        private int _currentMessage;
-        private static bool _isQuitting = false;
-        
-        private static NeedleConsole _instance;
-
-        private void Awake() => _instance = this;
-        private void Start() => ConsoleCommandRegistry.Initialize();
-
-        public static void Log(params string[] message) => Log(MessageType.Debug, message);
-        
-        public static void Log(MessageType messageType, params string[] message) => Log( new Message(String.Join(" ", message), messageType));
-
-        public static void Log(Message msg)
+        private ConsoleUI<MessageType> _console;
+        private void Start()
         {
-            if (_instance != null) _instance.DisplayMessage(msg);
-            else if (Application.isPlaying && !_isQuitting) Debug.LogError("You need to create NeedleConsole GameObject first! See Examples!");
-        }
-
-        public static void RegisterInstanceCommand(object source) =>
-            ConsoleCommandRegistry.RegisterInstanceCommands(source);
-
-        public static void UnregisterInstanceCommand(object source) =>
-            ConsoleCommandRegistry.UnregisterInstanceCommands(source);
-
-        private void DisplayMessage(Message msg)
-        {
-            string content = msg.Content;
-            string color = NeedleColors.GetColor((int) msg.Type);
+            _colors.Add (MessageType.Info, NeedleColors.Colors[0]);
+            _colors.Add (MessageType.Warning, NeedleColors.Colors[1]);
+            _colors.Add (MessageType.Error, NeedleColors.Colors[2]);
+            _colors.Add (MessageType.Debug, NeedleColors.Colors[3]);
+            _colors.Add (MessageType.UserInput, NeedleColors.Colors[4]);
             
-            if (msg.Type == MessageType.UserInput)  output.text += $"\n{Utils.AttributizeText( $"> {content}", "b", $"color={color}")}";
-            else output.text += $"\n {Utils.AttributizeText( $"[{msg.Type.ToString()}]", $"color={color}", "b", "i")} {content}";
+            _console = new ConsoleUI<MessageType>(output, _messageLogger, _colors, tooltip, MessageType.Info, MessageType.Warning, MessageType.Error, MessageType.Debug, MessageType.UserInput);
             
-            RectTransform rectTransform = output.GetComponent<RectTransform>();
-            
-            if (rectTransform.sizeDelta.y >= output.preferredHeight) return;
-            
-            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x,output.preferredHeight);
-            scrollRect.verticalNormalizedPosition = 0f;
-        }
-
-        private static int CountSubstringInString(string source, string substring) =>
-            source.Length - source.Replace(substring, "").Length;
-        
-        public void RunCommand(string entry)
-        {
-            string[] entries = entry.Split(" ");
-            DisplayMessage(new Message(entry, MessageType.UserInput));
-            List<string> args = entries.Length > 1 ? entries.Skip(1).ToList() : new List<string>();
-
-            int count = CountSubstringInString(entry.Substring(entries[0].Length), "\"");
-            // getting args in " 
-            for (int i = 0; i < args.Count && count >= 2; i++)
-            {
-                if (!args[i].StartsWith("\"")) continue;
-                string currentString = args[i];
-                for (int j = i; j < args.Count; j++)
-                { 
-                    if (j > i) currentString += " " + args[j];
-                    if (!args[j].EndsWith("\"")) continue;
-                    for (int k = j; k > i; args.RemoveAt(k--));
-                    args[i] = currentString.Substring(1, currentString.Length - 2);
-                    count -= CountSubstringInString(currentString, "\""); // because " can be also inside, not in start/end
-                    break;
-                }
-            }
-
-            for (int i = 0; i < suggestionsUI.Count; suggestionsUI[i].text = "");
-            _currentSuggestions.Clear();
-            _currentSuggestions.Add(entry);
-            DisplayMessage(ConsoleCommandRegistry.Execute(entries[0], args.ToArray()));
-        }
-
-        public void ShowSuggestions(string newInput)
-        {
-            _currentSuggestions = GetSuggestions(newInput, suggestionsUI.Count);
-            for (int i = 0; i < _currentSuggestions.Count; suggestionsUI[i].text = _currentSuggestions[i++]);
+            _console.Log("Welcome to the console!");
+            _console.Warning("Warning");
+            _console.Error("Error");
+            _console.Debug("Debug");
         }
         
-        public List<string> GetSuggestions(string input, int amount)
+        public void HandleInput(string input) => _console.HandleInput(input);
+
+        public void DummyLog()
         {
-            if (string.IsNullOrEmpty(input))
-                return new List<string>();
-
-            var matches = ConsoleCommandRegistry.Commands.Keys.ToArray()
-                .OrderBy(cmd => Utils.LevenshteinDistance(input.ToLower(), cmd.ToLower()))
-                .Take(amount)
-                .ToList();
-
-            return matches;
+            _console.Log("Dummy log");
         }
-        
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetOnPlayMode() => _isQuitting = false;
-        
-        private void OnApplicationQuit() => _isQuitting = true;
-        
+
+        public void RandomFiler()
+        {
+            var filter = (MessageType) Random.Range(0, (int) MessageType.UserInput + 1);
+            MessageType[] filters = {filter};
+            _console.FilterBy(filters);
+            _console.Log($"Random filter applied: {filters[0]}", filters[0]);
+        }
     }
 }

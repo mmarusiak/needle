@@ -1,4 +1,6 @@
+using System;
 using Needle.Console.Logger;
+using TMPro;
 using UnityEngine;
 
 namespace Needle.Console.Utilities
@@ -49,5 +51,39 @@ namespace Needle.Console.Utilities
 
             return dp[a.Length, b.Length];
         }
+        
+        public static bool TryGetSubstringCharacterRange(TextMeshProUGUI textMesh, string targetSubstring, out int startIndex, out int endIndex)
+        {
+            startIndex = -1;
+            endIndex = -1;
+
+            string fullText = textMesh.text;
+            int substringStart = fullText.IndexOf(targetSubstring, StringComparison.Ordinal);
+
+            if (substringStart == -1)
+                return false;
+
+            startIndex = substringStart;
+            endIndex = startIndex + targetSubstring.Length - 1;
+            return true;
+        }
+        public static int GetNearestCharacterWithMaxDistance(TextMeshProUGUI textMeshProUGUI, Vector3 mousePosition, float maxDistance)
+        {
+            int nearestCharIndex = TMP_TextUtilities.FindNearestCharacter(textMeshProUGUI, mousePosition, null, false);
+            if (nearestCharIndex == -1) return -1;
+            // Get the world position of the character's center bounding box
+            Vector3 charCenterBottom = (textMeshProUGUI.textInfo.characterInfo[nearestCharIndex].bottomLeft +
+                                        textMeshProUGUI.textInfo.characterInfo[nearestCharIndex].topRight) / 2;
+            Vector3 charWorldPosition = textMeshProUGUI.transform.TransformPoint(charCenterBottom);
+            // Calculate the distance from the mouse position to the character
+            float distance = Vector3.Distance(mousePosition, charWorldPosition);
+            // If the distance is greater than maxDistance, return -1 (no valid character)
+            if (distance > maxDistance) return -1;
+            // Return the index of the nearest character within the max distance
+            return nearestCharIndex;
+        }
+        
+        public static int CountSubstringInString(string source, string substring) =>
+            source.Length - source.Replace(substring, "").Length;
     }
 }
