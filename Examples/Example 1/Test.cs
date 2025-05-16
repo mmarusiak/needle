@@ -35,6 +35,7 @@ namespace NeedleAssets.Examples.Example_1
         {
             Needle.Log("Hello World!");
             Needle.Log("Static Echo", MessageType.Debug);
+            Vector2 v2 = new Vector2();
         }
     }
 }

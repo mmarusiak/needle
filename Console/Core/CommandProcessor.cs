@@ -59,7 +59,9 @@ namespace NeedleAssets.Console.Core
             foreach(var cmd in cmds)
             {
                 Assert.IsNotNull(cmd, "cmd should not be null!");
-                var argToParse = entries[0].Length + 1 <= entry.Length ? entry[paramsOffset..] : null;
+                var argToParse = paramsOffset <= entry.Length ? entry[paramsOffset..] : null;
+                // check if it's generic parameter - it's constructor
+                // move to another function I think...
                 if (ParseParameters(argToParse, cmd.Parameters, out object[] outArgs, out string error))
                 {
                     try
