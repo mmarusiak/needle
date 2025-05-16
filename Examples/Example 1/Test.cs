@@ -1,5 +1,7 @@
+
 using Needle.Console.Core;
 using Needle.Console.Core.Command;
+using Needle.Console.Logger;
 using UnityEngine;
 
 namespace Needle.Examples.Example_1
@@ -27,6 +29,12 @@ namespace Needle.Examples.Example_1
         public string Echo(string param)
         {
             return param;
+        }
+
+        public void Start()
+        {
+            Console.Needle.Log("Hello World");
+            Console.Needle.Log("Static Echo", MessageType.Debug);
         }
     }
 }

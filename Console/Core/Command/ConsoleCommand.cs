@@ -11,13 +11,15 @@ namespace Needle.Console.Core.Command
         private object _source;
         public string Name { get; }
         public string Description { get; }
+        public bool DevCommand { get; }
         private Parameter[] _parameters;
         private MethodInfo _method;
 
-        public ConsoleCommand(string name, string description)
+        public ConsoleCommand(string name, string description, bool devCommand = false)
         {
             Name = name;
             Description = description;
+            DevCommand = devCommand;
         }
 
         public void RegisterMethod(MethodInfo method, ParamIdentifier identifier, ParamDescriptor descriptor)

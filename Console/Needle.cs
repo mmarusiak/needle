@@ -1,49 +1,31 @@
 using System.Collections.Generic;
+using Needle.Console.Core.Command;
 using Needle.Console.Logger;
-using Needle.Console.UI;
 using Needle.Console.UI.Entries;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Needle.Console
 {
-    public class Needle : MonoBehaviour
+    public class Needle : NeedleConsole<MessageType>
     {
-        private Dictionary<MessageType, Color> _colors = new ();
-        [SerializeField] private IEntryLogger<MessageType> _messageLogger = new NeedleEntryLogger<MessageType>();
-        [SerializeField] private LogText output;
-        [FormerlySerializedAs("_tooltip")] [SerializeField] private ConsoleTooltip tooltip;
-
-        private ConsoleUI<MessageType> _console;
-        private void Start()
+        protected override Dictionary<MessageType, Color> TypeToColors => new ()
         {
-            _colors.Add (MessageType.Info, NeedleColors.Colors[0]);
-            _colors.Add (MessageType.Warning, NeedleColors.Colors[1]);
-            _colors.Add (MessageType.Error, NeedleColors.Colors[2]);
-            _colors.Add (MessageType.Debug, NeedleColors.Colors[3]);
-            _colors.Add (MessageType.UserInput, NeedleColors.Colors[4]);
-            
-            _console = new ConsoleUI<MessageType>(output, _messageLogger, _colors, tooltip, MessageType.Info, MessageType.Warning, MessageType.Error, MessageType.Debug, MessageType.UserInput);
-            
-            _console.Log("Welcome to the console!");
-            _console.Warning("Warning");
-            _console.Error("Error");
-            _console.Debug("Debug");
-        }
-        
-        public void HandleInput(string input) => _console.HandleInput(input);
+            {MessageType.Info, NeedleColors.Colors[0]},
+            {MessageType.Warning, NeedleColors.Colors[1]},
+            {MessageType.Error, NeedleColors.Colors[2]},
+            {MessageType.Debug, NeedleColors.Colors[3]},
+            {MessageType.UserInput, NeedleColors.Colors[4]},
+        };
 
-        public void DummyLog()
-        {
-            _console.Log("Dummy log");
-        }
+        protected override MessageType Info => MessageType.Info;
+        protected override MessageType Warning => MessageType.Warning;
+        protected override MessageType Error => MessageType.Error;
+        protected override MessageType Debug => MessageType.Debug;
+        protected override MessageType Input => MessageType.UserInput;
 
-        public void RandomFiler()
-        {
-            var filter = (MessageType) Random.Range(0, (int) MessageType.UserInput + 1);
-            MessageType[] filters = {filter};
-            _console.FilterBy(filters);
-            _console.Log($"Random filter applied: {filters[0]}", filters[0]);
-        }
+        protected override IEntryLogger<MessageType> MessageLogger() => new NeedleEntryLogger<MessageType>();
+
+        [ConsoleCommand("echo", "Echo")]
+        public static string Echo(string message) => message;
     }
 }

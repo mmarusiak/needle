@@ -106,6 +106,11 @@ namespace Needle.Console.UI
         public void DisplayTooltip(int characterIndex)
         {
             int[] keys = _displayedLogs.Keys.ToArray();
+            if (keys.Length == 0)
+            {
+                HideTooltip();
+                return;
+            }
             int target = keys[0];
             for (int i = 1; i < keys.Length && characterIndex > target; target = keys[i++]) ;
             var targetLog = _displayedLogs[target];
