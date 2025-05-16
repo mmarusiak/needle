@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Needle.Console.Core.Command;
-using Needle.Console.Logger;
-using Needle.Console.UI.Entries;
+using NeedleAssets.Console.Core.Command;
+using NeedleAssets.Console.UI.Entries;
+using NeedleAssets.Console.Utilities;
 using UnityEngine;
 
-namespace Needle.Console
+namespace NeedleAssets.Console
 {
     public class Needle : NeedleConsole<MessageType>
     {

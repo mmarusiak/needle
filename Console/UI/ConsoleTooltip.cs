@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Needle.Console.UI
+namespace NeedleAssets.Console.UI
 {
     public class ConsoleTooltip : MonoBehaviour
     {

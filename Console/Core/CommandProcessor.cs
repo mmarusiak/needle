@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Needle.Console.Core.Command;
-using Needle.Console.Utilities;
+using NeedleAssets.Console.Core.Command;
+using NeedleAssets.Console.Utilities;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Needle.Console.Core
+namespace NeedleAssets.Console.Core
 {
     public class CommandProcessor
     {

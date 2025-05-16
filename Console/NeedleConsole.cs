@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Needle.Console.UI;
-using Needle.Console.UI.Entries;
+using NeedleAssets.Console.UI;
+using NeedleAssets.Console.UI.Entries;
 using UnityEngine;
 
-namespace Needle.Console
+namespace NeedleAssets.Console
 {
     public abstract class NeedleConsole<T> : MonoBehaviour where T : Enum
     {

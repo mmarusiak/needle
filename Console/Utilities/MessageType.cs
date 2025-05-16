@@ -1,4 +1,4 @@
-namespace Needle.Console.Logger
+namespace NeedleAssets.Console.Utilities
 {
     public enum MessageType
     {

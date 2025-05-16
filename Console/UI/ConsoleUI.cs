@@ -2,17 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Needle.Console.Core;
-using Needle.Console.UI.Entries;
-using TMPro;
+using NeedleAssets.Console.Core;
+using NeedleAssets.Console.UI.Entries;
 using UnityEngine;
-using Needle.Console.Utilities;
 
-namespace Needle.Console.UI
+namespace NeedleAssets.Console.UI
 {
     public class ConsoleUI<T> where T : Enum
     {
-        public static bool DeveloperMode = true;
+        public bool DeveloperMode = true;
         
         private IEntryLogger<T> _entryLogger;
         
@@ -175,7 +173,6 @@ namespace Needle.Console.UI
                 i[earliestIndex]++; 
                 if (_logs[filters[earliestIndex]].Count <= i[earliestIndex]) i[earliestIndex] = -1;
                 
-                UnityEngine.Debug.Log(earliestLog.Content);
                 UpdateDictionaryLog(filtered, earliestLog);
             }
             

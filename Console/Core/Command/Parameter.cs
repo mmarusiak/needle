@@ -2,7 +2,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Needle.Console.Core.Command
+namespace NeedleAssets.Console.Core.Command
 {
     public class Parameter
     {

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using NeedleAssets.Console.Utilities;
 using UnityEngine;
-using Needle.Console.Utilities;
 
-namespace Needle.Console.UI.Entries
+namespace NeedleAssets.Console.UI.Entries
 {
     public class NeedleEntryLogger<T> : IEntryLogger<T> where T : Enum
     {
@@ -17,12 +17,12 @@ namespace Needle.Console.UI.Entries
 
         public string[] PlayerTooltip(ConsoleLogEntry<T> logEntry, Dictionary<T, Color> typeToColor)
         {
-            return new string[] {""};
+            return new [] {""};
         }
 
         public string[] DevTooltip(ConsoleLogEntry<T> logEntry, Dictionary<T, Color> typeToColor)
         {
-            return new string[]
+            return new []
             {
                 $"Content: {logEntry.Content}",
                 $"Sent on: {logEntry.Timestamp}",

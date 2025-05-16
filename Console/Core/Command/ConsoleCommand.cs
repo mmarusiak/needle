@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using UnityEngine.Assertions;
 
-namespace Needle.Console.Core.Command
+namespace NeedleAssets.Console.Core.Command
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = true)]
     public class ConsoleCommand : Attribute

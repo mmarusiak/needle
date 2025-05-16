@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Needle.Console.Logger
+namespace NeedleAssets.Console.Utilities
 {
-    public class NeedleColors
+    public static class NeedleColors
     {
         public static readonly Color[] Colors =
         {

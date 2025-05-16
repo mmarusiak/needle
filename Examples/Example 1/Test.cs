@@ -1,10 +1,10 @@
-
-using Needle.Console.Core;
-using Needle.Console.Core.Command;
-using Needle.Console.Logger;
+using NeedleAssets.Console;
+using NeedleAssets.Console.Core;
+using NeedleAssets.Console.Core.Command;
+using NeedleAssets.Console.Utilities;
 using UnityEngine;
 
-namespace Needle.Examples.Example_1
+namespace NeedleAssets.Examples.Example_1
 {
     public class Test : NeedleBehaviour
     {
@@ -33,8 +33,8 @@ namespace Needle.Examples.Example_1
 
         public void Start()
         {
-            Console.Needle.Log("Hello World");
-            Console.Needle.Log("Static Echo", MessageType.Debug);
+            Needle.Log("Hello World!");
+            Needle.Log("Static Echo", MessageType.Debug);
         }
     }
 }

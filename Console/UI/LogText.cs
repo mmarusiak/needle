@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
-using Needle.Console.Utilities;
+using NeedleAssets.Console.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Needle.Console.UI
+namespace NeedleAssets.Console.UI
 {
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class LogText : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler
     {
         private TextMeshProUGUI _textMeshProUGUI;
-        private bool _mouseIsOverText = false;
+        private bool _mouseIsOverText;
         private readonly List<Action<int>> _onHoverActions = new();
         private readonly List<Action> _onQuitHoverActions = new();
 

@@ -1,11 +1,10 @@
 using System;
-using Needle.Console.Logger;
 using TMPro;
 using UnityEngine;
 
-namespace Needle.Console.Utilities
+namespace NeedleAssets.Console.Utilities
 {
-    public class Utils
+    public static class Utils
     {
         public static string ColorizeText(string text, Color color)
         {

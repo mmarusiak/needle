@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Needle.Console.Core.Command;
+using NeedleAssets.Console.Core.Command;
 
-namespace Needle.Console.Core
+namespace NeedleAssets.Console.Core
 {
     public static class CommandRegistry
     {

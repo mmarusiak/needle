@@ -1,6 +1,4 @@
-using UnityEngine;
-
-namespace Needle.Console.Core
+namespace NeedleAssets.Console.Core
 {
     public class ConsoleManager
     {
