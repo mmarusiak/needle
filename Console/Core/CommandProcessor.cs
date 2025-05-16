@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NeedleAssets.Console.Core.Command;
+using NeedleAssets.Console.Parser;
 using NeedleAssets.Console.Utilities;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -11,8 +12,6 @@ namespace NeedleAssets.Console.Core
 {
     public class CommandProcessor
     {
-        // TO DO: 
-        // here add [] object identifier
         public static bool RunCommand(string entry, out string[] output)
         {
             string[] entries = entry.Split(' ');
@@ -25,6 +24,7 @@ namespace NeedleAssets.Console.Core
             // bad looking clone...
             List<ConsoleCommand> cmds = CommandRegistry.Commands.GetValueOrDefault(entries[0]).ToArray<ConsoleCommand>().ToList();
             // [] object identifier
+            // static / runtime / gameobject
             Match objectExpression = Regex.Match(String.Join(' ', entries[1..]), @"^\[([^\]]+)\]");
             if (objectExpression.Success)
             {
@@ -54,19 +54,19 @@ namespace NeedleAssets.Console.Core
                 return false;
             }
             
+            // run commands
             output = new string[cmds.Count];
             int i = 0;
             foreach(var cmd in cmds)
             {
                 Assert.IsNotNull(cmd, "cmd should not be null!");
                 var argToParse = paramsOffset <= entry.Length ? entry[paramsOffset..] : null;
-                // check if it's generic parameter - it's constructor
-                // move to another function I think...
-                if (ParseParameters(argToParse, cmd.Parameters, out object[] outArgs, out string error))
+                ParameterParser parser = new ParameterParser(GetArgs(argToParse), cmd.Parameters);
+                if (parser.Success)
                 {
                     try
                     {
-                        var outcome = cmd.Method.Invoke(cmd.Source, outArgs);
+                        var outcome = cmd.Method.Invoke(cmd.Source, parser.Result);
                         output[i++] = cmd.Method.ReturnType == typeof(void) ? "Method was called!" : outcome.ToString();
                     }
                     catch (Exception ex)
@@ -77,46 +77,10 @@ namespace NeedleAssets.Console.Core
                 }
                 else
                 {
-                    output = new [] { error };
+                    output = new [] { parser.Error };
                     return false;
                 }
             }
-            return true;
-        }
-
-        // TO DO!!!
-        private static bool ParseParameters(string entryArgs, Parameter[] parameters, out object[] result, out string error)
-        {
-            // how to parse vectors/colors other types?
-            string[] args = GetArgs(entryArgs);
-            List<object> outArgs = new List<object>();
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                var param = parameters[i];
-                if (args.Length <= i && !param.Required) outArgs.Add(param.Info.DefaultValue);
-                else if (args.Length <= i)
-                {
-                    error = $"Expected at least  {i + 1} required parameters but got {args.Length}! Error while trying to parse arg {param.Name}!";
-                    result = null;
-                    return false;
-                }
-                else
-                {
-                    try
-                    {
-                        outArgs.Add(Convert.ChangeType(args[i], param.Info.ParameterType));
-                    }
-                    catch (Exception ex)
-                    {
-                        error =
-                            $"Error while trying to parse arg {param.Name}:{param.Info.ParameterType}, provided value: \'{args[i]}\'. {ex.Message}";
-                        result = null;
-                        return false;
-                    }
-                }
-            }
-            result = outArgs.ToArray();
-            error = "";
             return true;
         }
 

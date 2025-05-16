@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace NeedleAssets.Console.Core.Command
@@ -56,9 +57,9 @@ namespace NeedleAssets.Console.Core.Command
         private void RegisterParameters(ParameterInfo[] parameters, ParamIdentifier identifier, ParamDescriptor descriptor)
         {
             _parameters = new Parameter[parameters.Length];
-            ParameterInfo paramInfo = parameters.Length != 0 ? parameters[0] : null;
-            for (int i = 0; i < parameters.Length; paramInfo = parameters[i++])
+            for (int i = 0; i < parameters.Length; i++)
             {
+                var paramInfo = parameters[i];
                 Assert.IsNotNull(paramInfo, "Param info should not be null!");
                 string description = (descriptor != null && descriptor.Length > i) ? descriptor.Get(i) : string.Empty;
                 string name = identifier == null ? paramInfo.Name : identifier.Name;

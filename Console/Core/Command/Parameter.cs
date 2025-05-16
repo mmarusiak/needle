@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using NeedleAssets.Console.Parser;
 using NeedleAssets.Console.Utilities;
+using UnityEngine;
 
 namespace NeedleAssets.Console.Core.Command
 {

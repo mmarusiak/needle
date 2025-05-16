@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using UnityEngine;
 
 namespace NeedleAssets.Console.Parser
 {
@@ -10,12 +11,7 @@ namespace NeedleAssets.Console.Parser
         public static Delegate CreateConstructorDelegate(Type type, out ParameterInfo[] parameterTypes)
         {
             var constructors = type.GetConstructors();
-
-            var ctor = constructors
-                           .FirstOrDefault(c => c.GetCustomAttribute<CommandConstructor>() != null)
-                       ?? constructors
-                           .OrderByDescending(c => c.GetParameters().Length)
-                           .FirstOrDefault();
+            var ctor = GetConstructor(constructors);
 
             if (ctor == null)
                 throw new InvalidOperationException($"No public constructor found for type {type}");
@@ -34,6 +30,24 @@ namespace NeedleAssets.Console.Parser
             var lambda = Expression.Lambda(typeof(Func<object[], object>), Expression.Convert(newExpr, typeof(object)), paramExpr);
 
             return lambda.Compile();
+        }
+        
+        private static ConstructorInfo GetConstructor(ConstructorInfo[] constructors)
+        {
+            ConstructorInfo current = null;
+            int len = 0;
+
+            foreach (var c in constructors)
+            {
+                if (c.GetCustomAttribute<CommandConstructor>() != null) return c;
+                if (current == null || len < c.GetParameters().Length)
+                {
+                    len = c.GetParameters().Length;
+                    current = c;
+                }
+            }
+            
+            return current;
         }
     }
 }
