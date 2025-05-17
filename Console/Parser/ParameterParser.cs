@@ -44,7 +44,7 @@ namespace NeedleAssets.Console.Parser
                 if (args.Length <= _index && !param.Required) outArgs.Add(param.Info.DefaultValue);
                 else if (args.Length <= _index)
                 {
-                    error = $"Expected at least  {_index + 1} (count of parameters with possible optional ones: {_parametersLength}) required parameters but got {args.Length}! Error while trying to parse arg {param.Name}!";
+                    error = $"Expected at least  {_index + 1} required parameters (count of parameters with possible optional ones: {_parametersLength}) but got {args.Length}! Error while trying to parse arg {param.Name}!";
                     result = null;
                     return false;
                 }
@@ -58,7 +58,7 @@ namespace NeedleAssets.Console.Parser
                     catch (Exception ex)
                     {
                         error =
-                            $"Error while trying to parse arg {param.Name}:{param.Info.ParameterType}, provided value: \'{args[_index]}\'. {ex.Message}";
+                            $"Error while trying to parse arg {param.Name}: {param.Info.ParameterType.Name}, provided value: \'{args[_index]}\'. {ex.Message}";
                         result = null;
                         return false;
                     }
@@ -76,7 +76,7 @@ namespace NeedleAssets.Console.Parser
                     }
                     else
                     {
-                        error = parser.Error;
+                        error = $"Error while parsing subparameters for {param.Info.ParameterType.Name} {param.Name}: {parser.Error}";
                         result = null;
                         return false;
                     }

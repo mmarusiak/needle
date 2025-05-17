@@ -52,7 +52,7 @@ namespace NeedleAssets.Console.Utilities
         {
             if (rawArgs == null) return Array.Empty<string>();
             List<string> args = rawArgs.Split(' ').ToList();
-            int count = Utils.CountSubstringInString(rawArgs, "\"");
+            int count = CountSubstringInString(rawArgs, "\"");
             // getting args in " "
             for (int i = 0; i < args.Count && count >= 2; i++)
             {
@@ -64,7 +64,7 @@ namespace NeedleAssets.Console.Utilities
                     if (!args[j].EndsWith("\"")) continue;
                     for (int k = j; k > i; args.RemoveAt(k--));
                     args[i] = currentString.Substring(1, currentString.Length - 2);
-                    count -= Utils.CountSubstringInString(currentString, "\""); // because " can be also inside, not in start/end
+                    count -= CountSubstringInString(currentString, "\""); // because " can be also inside, not in start/end
                     break;
                 }
             }
