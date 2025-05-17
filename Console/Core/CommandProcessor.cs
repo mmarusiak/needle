@@ -28,7 +28,7 @@ namespace NeedleAssets.Console.Core
             Match objectExpression = Regex.Match(String.Join(' ', entries[1..]), @"^\[([^\]]+)\]");
             if (objectExpression.Success)
             {
-                string[] names = GetArgs(objectExpression.Groups[1].Value.ToLower());
+                string[] names = Utils.GetArgs(objectExpression.Groups[1].Value.ToLower());
                 bool statics = names.Contains("static");
                 bool runtime = names.Contains("runtime");
 
@@ -61,7 +61,7 @@ namespace NeedleAssets.Console.Core
             {
                 Assert.IsNotNull(cmd, "cmd should not be null!");
                 var argToParse = paramsOffset <= entry.Length ? entry[paramsOffset..] : null;
-                ParameterParser parser = new ParameterParser(GetArgs(argToParse), cmd.Parameters);
+                ParameterParser parser = new ParameterParser(Utils.GetArgs(argToParse), cmd.Parameters);
                 if (parser.Success)
                 {
                     try
@@ -82,29 +82,6 @@ namespace NeedleAssets.Console.Core
                 }
             }
             return true;
-        }
-
-        private static string[] GetArgs(string rawArgs)
-        {
-            if (rawArgs == null) return Array.Empty<string>();
-            List<string> args = rawArgs.Split(' ').ToList();
-            int count = Utils.CountSubstringInString(rawArgs, "\"");
-            // getting args in " "
-            for (int i = 0; i < args.Count && count >= 2; i++)
-            {
-                if (!args[i].StartsWith("\"")) continue;
-                string currentString = args[i];
-                for (int j = i; j < args.Count; j++)
-                { 
-                    if (j > i) currentString += " " + args[j];
-                    if (!args[j].EndsWith("\"")) continue;
-                    for (int k = j; k > i; args.RemoveAt(k--));
-                    args[i] = currentString.Substring(1, currentString.Length - 2);
-                    count -= Utils.CountSubstringInString(currentString, "\""); // because " can be also inside, not in start/end
-                    break;
-                }
-            }
-            return args.ToArray();
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using NeedleAssets.Console.Core.Command;
-using UnityEngine;
 
 namespace NeedleAssets.Console.Parser
 {
@@ -38,21 +37,9 @@ namespace NeedleAssets.Console.Parser
         
         private bool ParseParameters(string[] args, Parameter[] parameters, out object[] result, out string error)
         {
-            // how to parse vectors/colors other types?
-            // here parse!!!
             List<object> outArgs = new List<object>();
-            // maybe loop through all parameters and sub parameters? through 'mega count'
-            // store current param index
             for (; _index < _parametersLength; _index++)
             {
-                 // check if is generic
-                 // if is then do what we do
-                 // if not then we should:
-                 // then take i - param index parameter and that's our parameter
-                 // what if this parameter is not generic?
-                 // maybe... take args from i to end and call ParseParameters with this parameter - try to get object
-                 // add some index callout
-                 // add to outArgs
                 var param = parameters[_paramIndex];
                 if (args.Length <= _index && !param.Required) outArgs.Add(param.Info.DefaultValue);
                 else if (args.Length <= _index)

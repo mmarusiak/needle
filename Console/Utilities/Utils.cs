@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -44,6 +46,29 @@ namespace NeedleAssets.Console.Utilities
         {
             var converter = TypeDescriptor.GetConverter(type);
             return converter.CanConvertFrom(typeof(string));
+        }
+        
+        public static string[] GetArgs(string rawArgs)
+        {
+            if (rawArgs == null) return Array.Empty<string>();
+            List<string> args = rawArgs.Split(' ').ToList();
+            int count = Utils.CountSubstringInString(rawArgs, "\"");
+            // getting args in " "
+            for (int i = 0; i < args.Count && count >= 2; i++)
+            {
+                if (!args[i].StartsWith("\"")) continue;
+                string currentString = args[i];
+                for (int j = i; j < args.Count; j++)
+                { 
+                    if (j > i) currentString += " " + args[j];
+                    if (!args[j].EndsWith("\"")) continue;
+                    for (int k = j; k > i; args.RemoveAt(k--));
+                    args[i] = currentString.Substring(1, currentString.Length - 2);
+                    count -= Utils.CountSubstringInString(currentString, "\""); // because " can be also inside, not in start/end
+                    break;
+                }
+            }
+            return args.ToArray();
         }
     }
 }

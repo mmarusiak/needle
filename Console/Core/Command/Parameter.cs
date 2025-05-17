@@ -2,7 +2,6 @@ using System;
 using System.Reflection;
 using NeedleAssets.Console.Parser;
 using NeedleAssets.Console.Utilities;
-using UnityEngine;
 
 namespace NeedleAssets.Console.Core.Command
 {
@@ -13,8 +12,6 @@ namespace NeedleAssets.Console.Core.Command
         public string Description { get; }
         public bool Required { get; }
         public bool Generic { get; }
-        
-        // if field is not generic then it has Constructor, and constructor has some parameters!
         public Delegate Constructor { get; }
         public Parameter[] SubParameters { get; }
         
