@@ -1,7 +1,6 @@
 using NeedleAssets.Console;
 using NeedleAssets.Console.Core;
 using NeedleAssets.Console.Core.Command;
-using NeedleAssets.Console.Utilities;
 using UnityEngine;
 
 namespace NeedleAssets.Examples.Example_1
@@ -45,17 +44,15 @@ namespace NeedleAssets.Examples.Example_1
             return $"Got vec2: ({vec2.x}, {vec2.y})";
         }
 
-        [ConsoleCommand("test_class", "Test command for parsing classes")]
+        [ConsoleCommand("test_class", "Test command for parsing classes", true)]
         public string TestClass(TestClass testClass)
         {
             return $"testClass.Position = ({testClass.Position.x}, {testClass.Position.y}, {testClass.Position.z}), testClass.Name = {testClass.Name}, testClass.Age = {testClass.Age}";
         }
-        
 
-        public void Start()
+        protected override void OnStart()
         {
-            Needle.Log("Hello World!");
-            Needle.Log("Static Echo", MessageType.Debug);
+            Needle.Log("Hello world!");
         }
     }
 }

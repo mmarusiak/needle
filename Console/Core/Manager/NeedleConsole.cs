@@ -4,12 +4,11 @@ using NeedleAssets.Console.UI;
 using NeedleAssets.Console.UI.Entries;
 using UnityEngine;
 
-namespace NeedleAssets.Console
+namespace NeedleAssets.Console.Core.Manager
 {
-    public abstract class NeedleConsole<T> : MonoBehaviour where T : Enum
+    public abstract class NeedleConsole<T> : NeedleConsoleBase where T : Enum
     {
         private static NeedleConsole<T> _instance;
-
         protected virtual Dictionary<T, Color> TypeToColors => new();
         protected abstract IEntryLogger<T> MessageLogger();
         private ConsoleUI<T> _console;
@@ -23,9 +22,10 @@ namespace NeedleAssets.Console
         [SerializeField] private LogText output;
         [SerializeField] private ConsoleTooltip tooltip;
 
-        public void Awake()
+        public override void Awake()
         {
-            _console = new ConsoleUI<T>(output, MessageLogger(), TypeToColors, tooltip, Info,
+            base.Awake();
+            _console = new ConsoleUI<T>(output, MessageLogger(), TypeToColors, tooltip, DeveloperMode(),Info,
                 Warning,Error, Debug, Input);
             _instance = this;
         }

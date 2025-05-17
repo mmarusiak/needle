@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.ComponentModel;
 using System.Linq;
 using TMPro;
@@ -69,6 +70,11 @@ namespace NeedleAssets.Console.Utilities
                 }
             }
             return args.ToArray();
+        }
+        
+        public static IEnumerator DelayFrame()
+        {
+            yield return null;
         }
     }
 }

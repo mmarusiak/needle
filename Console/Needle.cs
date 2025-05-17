@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NeedleAssets.Console.Core.Command;
+using NeedleAssets.Console.Core.Manager;
 using NeedleAssets.Console.UI.Entries;
 using NeedleAssets.Console.Utilities;
 using UnityEngine;

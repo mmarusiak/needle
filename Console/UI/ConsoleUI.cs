@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using NeedleAssets.Console.Core;
+using NeedleAssets.Console.Core.Manager;
 using NeedleAssets.Console.UI.Entries;
 using UnityEngine;
 
@@ -10,13 +11,11 @@ namespace NeedleAssets.Console.UI
 {
     public class ConsoleUI<T> where T : Enum
     {
-        public bool DeveloperMode = true;
+        private readonly IEntryLogger<T> _entryLogger;
         
-        private IEntryLogger<T> _entryLogger;
-        
-        private Dictionary<T, Color> _typeToColor;
-        private LogText _output;
-        private ConsoleTooltip _tooltip;
+        private readonly Dictionary<T, Color> _typeToColor;
+        private readonly LogText _output;
+        private readonly ConsoleTooltip _tooltip;
 
         private T[] _filters;
         
@@ -50,7 +49,7 @@ namespace NeedleAssets.Console.UI
             }
         }
 
-        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, ConsoleTooltip tooltip, 
+        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, ConsoleTooltip tooltip, bool developerMode,
             T infoType = default, T warningType = default, T errorType = default, T debugType = default, T inputType = default)
         {
             _typeToColor = typeToColor;
@@ -116,13 +115,13 @@ namespace NeedleAssets.Console.UI
             // adjust pos of tooltip to mouse pos
             _tooltip.transform.position = Input.mousePosition - Vector3.up * _tooltip.RectTransform.sizeDelta.y / 1.25f;
 
-            if (DeveloperMode && _entryLogger.DevTooltip(targetLog, _typeToColor) != null)
+            if (NeedleConsoleBase.InDeveloperMode && _entryLogger.DevTooltip(targetLog, _typeToColor) != null)
             {
                 _tooltip.SetHeader("Dev tooltip");
                 _tooltip.SetTooltip(String.Join("\n", _entryLogger.DevTooltip(targetLog, _typeToColor)));
             }
             
-            else if (!DeveloperMode && _entryLogger.PlayerTooltip(targetLog, _typeToColor) != null)
+            else if (!NeedleConsoleBase.InDeveloperMode && _entryLogger.PlayerTooltip(targetLog, _typeToColor) != null)
             {
                 _tooltip.SetHeader("Additional info");
                 _tooltip.SetTooltip(String.Join("\n", _entryLogger.PlayerTooltip(targetLog, _typeToColor)));

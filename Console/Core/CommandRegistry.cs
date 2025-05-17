@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using NeedleAssets.Console.Core.Command;
+using NeedleAssets.Console.Core.Manager;
 
 namespace NeedleAssets.Console.Core
 {
@@ -19,11 +20,12 @@ namespace NeedleAssets.Console.Core
             foreach (var method in methods)
             {
                 var cmd = method.GetCustomAttribute<ConsoleCommand>();
-                if (cmd == null) continue;
+                
+                if (cmd == null || (cmd.DevCommand && !NeedleConsoleBase.InDeveloperMode)) continue;
                             
                 ParamIdentifier identifier = method.GetCustomAttribute<ParamIdentifier>();
                 ParamDescriptor descriptor = method.GetCustomAttribute<ParamDescriptor>();
-                            
+                
                 cmd.RegisterMethod(method, identifier, descriptor);
                 cmd.RegisterSource(instance);
                             
@@ -40,9 +42,7 @@ namespace NeedleAssets.Console.Core
             foreach (var method in methods)
             {
                 var attr = method.GetCustomAttribute<ConsoleCommand>();
-                if (attr == null) continue;
-                
-                List<ConsoleCommand> cmds = Commands[attr.Name];
+                if (attr == null || !Commands.TryGetValue(attr.Name, out var cmds)) continue;
 
                 int i = 0;
                 for (ConsoleCommand cmd = cmds[i]; i < cmds.Count && instance != cmd.Source; cmd = cmds[++i]);
