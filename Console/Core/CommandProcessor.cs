@@ -10,7 +10,7 @@ using UnityEngine.Assertions;
 
 namespace NeedleAssets.Console.Core
 {
-    public class CommandProcessor
+    public static class CommandProcessor
     {
         public static bool RunCommand(string entry, out string[] output)
         {
@@ -32,18 +32,13 @@ namespace NeedleAssets.Console.Core
                 bool statics = names.Contains("static");
                 bool runtime = names.Contains("runtime");
 
-                int j = 0;
-                while (j < cmds.Count)
+                // remove commands without target source
+                for (int j = cmds.Count - 1; j >= 0; j--)
                 {
                     var c = cmds[j];
                     if (c.Source == null && !statics || c.Source != null && !runtime &&
                         !names.Contains((c.Source as MonoBehaviour)?.gameObject.name.ToLower()))
-                    {
                         cmds.Remove(c);
-                        continue;
-                    }
-
-                    j++;
                 }
                 paramsOffset += objectExpression.Groups[0].Value.Length + 1;
             }
