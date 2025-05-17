@@ -53,6 +53,7 @@ namespace NeedleAssets.Examples.Example_1
         protected override void OnStart()
         {
             Needle.Log("Hello world!");
+            Needle.LogColor("I'm red :o", Color.red);
         }
     }
 }

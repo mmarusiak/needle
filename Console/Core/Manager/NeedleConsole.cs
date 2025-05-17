@@ -32,8 +32,12 @@ namespace NeedleAssets.Console.Core.Manager
 
         public virtual void HandleInput(string input) => _console.HandleInput(input);
         
-        public static void Log(string message) => _instance._console.Log(message);
-        
-        public static void Log(string message, T type) => _instance._console.Log(message, type);
+        public static void Log(object message) => _instance._console.Log(message.ToString());
+        public static void LogDebug(object message) => _instance._console.Debug(message.ToString());
+        public static void LogWarning(object message) => _instance._console.Warning(message.ToString());
+        public static void LogError(object message) => _instance._console.Error(message.ToString());
+        public static void LogColor(object message, Color color) =>
+            _instance._console.Log(Utilities.Utils.ColorizeText(message.ToString(), color));
+        public static void Log(object message, T type) => _instance._console.Log(message.ToString(), type);
     }
 }
