@@ -1,6 +1,6 @@
 using System;
 
-namespace NeedleAssets.Console.Parser
+namespace NeedleAssets.Console.Core.Parser
 {
     [AttributeUsage(AttributeTargets.Constructor)]
     public class CommandConstructor : Attribute

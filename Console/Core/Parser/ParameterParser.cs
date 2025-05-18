@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using NeedleAssets.Console.Core.Command;
 
-namespace NeedleAssets.Console.Parser
+namespace NeedleAssets.Console.Core.Parser
 {
     public class ParameterParser
     {

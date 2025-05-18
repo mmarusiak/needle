@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace NeedleAssets.Console.Parser
+namespace NeedleAssets.Console.Core.Parser
 {
     public static class ParametersConstructors
     {

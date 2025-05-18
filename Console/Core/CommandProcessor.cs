@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NeedleAssets.Console.Core.Command;
-using NeedleAssets.Console.Parser;
+using NeedleAssets.Console.Core.Parser;
 using NeedleAssets.Console.Utilities;
 using UnityEngine;
 using UnityEngine.Assertions;

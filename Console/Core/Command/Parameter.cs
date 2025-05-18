@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using NeedleAssets.Console.Parser;
+using NeedleAssets.Console.Core.Parser;
 using NeedleAssets.Console.Utilities;
 
 namespace NeedleAssets.Console.Core.Command
