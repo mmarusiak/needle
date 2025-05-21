@@ -41,6 +41,18 @@ namespace NeedleAssets.Console.Core.Command
             }
         }
         
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (obj.GetType() != GetType()) return false;
+            var other = (ConsoleCommand)obj;
+            return (other.Source == Source && other.Name == Name);
+        }
+
+        public override int GetHashCode() => base.GetHashCode();
+
+        public override string ToString() => $"{Name} : {Description}, from {Source} dev mode: {DevCommand}";
+
         public void RegisterSource(object source) => _source = source;
         
         public object Source => _source;
