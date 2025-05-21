@@ -1,4 +1,5 @@
 using NeedleAssets.Console.Core.Command;
+using NeedleAssets.Console.UI.UserInput.Parameters;
 using TMPro;
 
 namespace NeedleAssets.Console.UI.UserInput.Suggestions
@@ -13,11 +14,11 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
             _text = text;
         }
 
-        public void SetConsoleCommand(ConsoleCommand command, ISuggestionLogger suggestionLogger)
+        public void SetConsoleCommand(ConsoleCommand command, IParameterLogger parameterLogger)
         {
             ShowText();
             _suggestedCommand = command;
-            _text.text = suggestionLogger.SuggestionText(command);
+            _text.text = parameterLogger.SuggestionText(command);
         }
         
         public void HideText() => _text.gameObject.SetActive(false);

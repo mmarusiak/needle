@@ -76,5 +76,8 @@ namespace NeedleAssets.Console.Utilities
         {
             yield return null;
         }
+
+        public static Dictionary<TK, TV> MergeDictionaries<TK, TV>(params Dictionary<TK, TV>[] dictionaries) => 
+            dictionaries.SelectMany(dict => dict).ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 }

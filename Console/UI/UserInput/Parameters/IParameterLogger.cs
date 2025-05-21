@@ -1,8 +1,8 @@
 using NeedleAssets.Console.Core.Command;
 
-namespace NeedleAssets.Console.UI.UserInput.Suggestions
+namespace NeedleAssets.Console.UI.UserInput.Parameters
 {
-    public interface ISuggestionLogger
+    public interface IParameterLogger
     {
         public string SuggestionText(ConsoleCommand command);
     }

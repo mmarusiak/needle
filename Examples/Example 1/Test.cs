@@ -1,6 +1,11 @@
+using System;
+using System.Linq;
 using NeedleAssets.Console;
 using NeedleAssets.Console.Core;
 using NeedleAssets.Console.Core.Command;
+using NeedleAssets.Console.Core.Registry;
+using NeedleAssets.Console.UI.UserInput.Parameters;
+using NeedleAssets.Console.UI.UserInput.Suggestions;
 using UnityEngine;
 
 namespace NeedleAssets.Examples.Example_1
@@ -16,12 +21,7 @@ namespace NeedleAssets.Examples.Example_1
             Debug.Log("Hello world!" );
             return "Success";
         }
-
-        [ConsoleCommand("echo", "echo but static")]
-        public static string StaticEcho(string text)
-        {
-            return $"static: {text}";
-        }
+        
         
         [ConsoleCommand("echo", "hello dear dev!")]
         [ParamDescriptor("some test description")]
@@ -54,6 +54,25 @@ namespace NeedleAssets.Examples.Example_1
         {
             Needle.Log("Hello world!");
             Needle.LogColor("I'm red :o", Color.red);
+        }
+
+        [ConsoleCommand("help", "Helps with all commands")]
+        public static string Help()
+        {
+            var cmds = CommandRegistry.CommandTree.AlphabeticalCommands();
+            string[] keys = cmds.Keys.ToArray();
+            string[] r = new string[keys.Length];
+            for (int i = 0; i < keys.Length; i++)
+            {
+                // what with descriptions?
+                var cmd = cmds[keys[i]][0];
+                IParameterLogger logger = new NeedleParameterLogger();
+                string parameters = logger.SuggestionText(cmd);
+                r[i] = parameters.Length > 0 ? $"Command: {keys[i]} \n\t{cmd.Description}\n\tDev command: {cmd.DevCommand}\n\tParameters: {parameters}" : 
+                    $"Command: {keys[i]} \n\t{cmd.Description}\n\tDev command: {cmd.DevCommand}";
+            }
+
+            return "List of all commands:\n" + string.Join("\n\n", r);
         }
     }
 }

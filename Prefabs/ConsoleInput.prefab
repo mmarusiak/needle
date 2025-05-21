@@ -353,6 +353,7 @@ GameObject:
   - component: {fileID: 3492109349928415161}
   - component: {fileID: 9087639261278674606}
   - component: {fileID: 8983201720738833941}
+  - component: {fileID: 1108141813417223789}
   m_Layer: 5
   m_Name: ConsoleInput
   m_TagString: Untagged
@@ -516,3 +517,18 @@ MonoBehaviour:
   m_isRichTextEditingAllowed: 0
   m_LineLimit: 0
   m_InputValidator: {fileID: 0}
+--- !u!114 &1108141813417223789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7920637415506697127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93c38d38c42a403d8286e5550f814cfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  suggestionsTexts: []
+  normalColor: {r: 0, g: 0, b: 0, a: 0}
+  selectionColor: {r: 0, g: 0, b: 0, a: 0}

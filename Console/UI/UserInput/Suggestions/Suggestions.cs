@@ -1,4 +1,6 @@
 using NeedleAssets.Console.Core;
+using NeedleAssets.Console.Core.Registry;
+using NeedleAssets.Console.UI.UserInput.Parameters;
 using TMPro;
 using UnityEngine;
 
@@ -12,7 +14,7 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
         
         private Suggestion[] _suggestions; 
         // default suggestion logger
-        private ISuggestionLogger _suggestionLogger = new NeedleSuggestionLogger();
+        private IParameterLogger _parameterLogger = new NeedleParameterLogger();
         
         private void Awake()
         {
@@ -22,7 +24,7 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
         public void GetNewSuggestions(string entry)
         {
             // commands are stored here... we should first make tri tree and then update this tri tree each time new command is registered/unregistered
-            Needle.Log(CommandRegistry.Commands.Count);
+            // Needle.Log(CommandRegistry.Commands.Count);
         }
     }
 }

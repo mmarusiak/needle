@@ -1,16 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using NeedleAssets.Console.Core.Command;
 using NeedleAssets.Console.Core.Manager;
+using NeedleAssets.Console.Core.Registry.TreeTri;
+using UnityEngine;
 
-namespace NeedleAssets.Console.Core
+namespace NeedleAssets.Console.Core.Registry
 {
     public static class CommandRegistry
     {
-        public static readonly Dictionary<string, List<ConsoleCommand>> Commands = new();
-
-        // register parameters better!!! 
+        public static readonly CommandTree CommandTree = new();
         
         public static void RegisterInstance(object instance)
         {
@@ -28,9 +27,8 @@ namespace NeedleAssets.Console.Core
                 
                 cmd.RegisterMethod(method, identifier, descriptor);
                 cmd.RegisterSource(instance);
-                            
-                if (!Commands.ContainsKey(cmd.Name)) Commands[cmd.Name] = new List<ConsoleCommand>();
-                Commands[cmd.Name].Add(cmd);
+ 
+                CommandTree.AddNode(cmd);
             }
         }
 
@@ -41,12 +39,11 @@ namespace NeedleAssets.Console.Core
 
             foreach (var method in methods)
             {
-                var attr = method.GetCustomAttribute<ConsoleCommand>();
-                if (attr == null || !Commands.TryGetValue(attr.Name, out var cmds)) continue;
-
-                int i = 0;
-                for (ConsoleCommand cmd = cmds[i]; i < cmds.Count && instance != cmd.Source; cmd = cmds[++i]);
-                cmds.RemoveAt(i);
+                var cmd = method.GetCustomAttribute<ConsoleCommand>();
+                if (cmd == null) continue;
+                
+                cmd.RegisterSource(instance);
+                if(CommandTree.RemoveNode(cmd) ?? false) Debug.LogWarning($"Failed to unregister '{cmd.Name}', could not be found.");
             }
         }
 
@@ -66,8 +63,7 @@ namespace NeedleAssets.Console.Core
                         
                         cmd.RegisterMethod(method, identifier, descriptor);
                         
-                        if (!Commands.ContainsKey(cmd.Name)) Commands[cmd.Name] = new List<ConsoleCommand>(); 
-                        Commands[cmd.Name].Add(cmd);
+                        CommandTree.AddNode(cmd);
                     }
                 }
             }

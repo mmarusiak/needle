@@ -1,3 +1,4 @@
+using NeedleAssets.Console.Core.Registry;
 using NeedleAssets.Console.Utilities;
 
 namespace NeedleAssets.Console.Core

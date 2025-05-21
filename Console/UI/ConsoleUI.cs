@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using NeedleAssets.Console.Core;
 using NeedleAssets.Console.Core.Manager;
+using NeedleAssets.Console.Core.Registry;
 using NeedleAssets.Console.UI.Entries;
 using UnityEngine;
 

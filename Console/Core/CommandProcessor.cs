@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NeedleAssets.Console.Core.Command;
 using NeedleAssets.Console.Core.Parser;
+using NeedleAssets.Console.Core.Registry;
+using NeedleAssets.Console.Core.Registry.TreeTri;
 using NeedleAssets.Console.Utilities;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -16,13 +18,13 @@ namespace NeedleAssets.Console.Core
         {
             string[] entries = entry.Split(' ');
             int paramsOffset = entries[0].Length + 1;
-            if (!CommandRegistry.Commands.ContainsKey(entries[0]) || CommandRegistry.Commands[entries[0]].Count == 0)
+            var cmds = CommandRegistry.CommandTree.CommandsByName(entries[0]);
+            if (cmds == null || cmds.Count == 0)
             {
                 output = new []{"Command not found"};
                 return false;
             }
             // bad looking clone...
-            List<ConsoleCommand> cmds = CommandRegistry.Commands.GetValueOrDefault(entries[0]).ToArray<ConsoleCommand>().ToList();
             // [] object identifier
             // static / runtime / gameobject
             Match objectExpression = Regex.Match(String.Join(' ', entries[1..]), @"^\[([^\]]+)\]");

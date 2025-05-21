@@ -25,8 +25,5 @@ namespace NeedleAssets.Console
         protected override MessageType Input => MessageType.UserInput;
 
         protected override IEntryLogger<MessageType> MessageLogger() => new NeedleEntryLogger<MessageType>();
-
-        [ConsoleCommand("echo", "Echo")]
-        public static string Echo(string message) => message;
     }
 }
