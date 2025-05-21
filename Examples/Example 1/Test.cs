@@ -33,6 +33,7 @@ namespace NeedleAssets.Examples.Example_1
         
 
         [ConsoleCommand("test_vectors", "Test command for parsing vectors")]
+        [ParamDescriptor("Vector2 to test multiple not generic parameters", "Vector3 to test multiple not generic parameters")]
         public string TestVectors(Vector2 vec2, Vector3 vec3)
         {
             return $"Got vec2: ({vec2.x}, {vec2.y}) and vec3: ({vec3.x}, {vec3.y}, {vec3.z})";
@@ -67,8 +68,8 @@ namespace NeedleAssets.Examples.Example_1
                 // what with descriptions?
                 var cmd = cmds[keys[i]][0];
                 IParameterLogger logger = new NeedleParameterLogger();
-                string parameters = logger.SuggestionText(cmd);
-                r[i] = parameters.Length > 0 ? $"Command: {keys[i]} \n\t{cmd.Description}\n\tDev command: {cmd.DevCommand}\n\tParameters: {parameters}" : 
+                string[] parameters = logger.ParametersDescription(cmd);
+                r[i] = parameters.Length > 0 ? $"Command: {keys[i]} \n\t{cmd.Description}\n\tDev command: {cmd.DevCommand}\n\tParameters: \n\t\t{string.Join("\n\t\t", parameters)}" : 
                     $"Command: {keys[i]} \n\t{cmd.Description}\n\tDev command: {cmd.DevCommand}";
             }
 

@@ -4,6 +4,7 @@ namespace NeedleAssets.Console.UI.UserInput.Parameters
 {
     public interface IParameterLogger
     {
-        public string SuggestionText(ConsoleCommand command);
+        public string[] ParametersOverview(ConsoleCommand command);
+        public string[] ParametersDescription(ConsoleCommand command);
     }
 }

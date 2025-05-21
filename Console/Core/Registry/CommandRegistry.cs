@@ -36,7 +36,7 @@ namespace NeedleAssets.Console.Core.Registry
         {
             Type type = instance.GetType();
             var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
+            
             foreach (var method in methods)
             {
                 var cmd = method.GetCustomAttribute<ConsoleCommand>();
