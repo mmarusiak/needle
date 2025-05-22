@@ -6,14 +6,16 @@ namespace NeedleAssets.Console.Core.Registry.TreeTri
 {
     public class CommandTree
     {
-        private readonly TreeNode<ConsoleCommand> _root = new TreeNode<ConsoleCommand>("");
+        private readonly TreeNode<ConsoleCommand> _root = new ("");
 
+        public TreeNode<ConsoleCommand> Root => _root;
+        
         public void AddNode(ConsoleCommand command)
         {
             _root.AddChildCommand(command, command.Name);   
         }
 
-        private TreeNode<ConsoleCommand> NodeByName(string name)
+        public TreeNode<ConsoleCommand> NodeByName(string name)
         {
             var n = _root;
             foreach (var c in name)

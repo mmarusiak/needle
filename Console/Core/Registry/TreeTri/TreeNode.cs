@@ -78,7 +78,7 @@ namespace NeedleAssets.Console.Core.Registry.TreeTri
         public string GetKey() => _key;
         private char GetCharKey() => _key[^1];
         
-        public TreeNode<T> GetParent => _parent;
+        public TreeNode<T> Parent => _parent;
         public List<T> Values => _values;
         public List<TreeNode<T>> Children => _children;
     }

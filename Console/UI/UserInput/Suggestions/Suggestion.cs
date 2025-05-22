@@ -18,7 +18,7 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
         {
             ShowText();
             _suggestedCommand = command;
-            _text.text = string.Join(", ", parameterLogger.ParametersOverview(command));
+            _text.text = $"{command.Name} {string.Join(", ", parameterLogger.ParametersOverview(command))}";
         }
         
         public void HideText() => _text.gameObject.SetActive(false);
