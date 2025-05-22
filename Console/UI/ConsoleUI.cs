@@ -16,7 +16,6 @@ namespace NeedleAssets.Console.UI
         
         private readonly Dictionary<T, Color> _typeToColor;
         private readonly LogText _output;
-        private readonly ConsoleTooltip _tooltip;
 
         private T[] _filters;
         
@@ -29,6 +28,8 @@ namespace NeedleAssets.Console.UI
 
         private readonly Dictionary<T, List<ConsoleLogEntry<T>>> _logs = new();
         private Dictionary<int, ConsoleLogEntry<T>> _displayedLogs = new ();
+        
+        public IEntryLogger<T> EntryLogger => _entryLogger;
         
         public Dictionary<int, ConsoleLogEntry<T>> DisplayedLogs
         {
@@ -50,15 +51,12 @@ namespace NeedleAssets.Console.UI
             }
         }
 
-        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, ConsoleTooltip tooltip, bool developerMode,
+        public ConsoleUI (LogText output, IEntryLogger<T> entryLogger, Dictionary<T, Color> typeToColor, bool developerMode,
             T infoType = default, T warningType = default, T errorType = default, T debugType = default, T inputType = default)
         {
             _typeToColor = typeToColor;
             _output = output;
             _entryLogger = entryLogger;
-            _tooltip = tooltip;
-            _output.AddHoverListener(DisplayTooltip);
-            _output.AddQuitHoverListener(HideTooltip);
             // set default message types
             _infoType = infoType;
             _warningType = warningType;
@@ -103,44 +101,6 @@ namespace NeedleAssets.Console.UI
             T commandType = CommandProcessor.RunCommand(input, out string[] output) ? _infoType : _errorType;
             foreach (string outmsg in output) Log(outmsg, commandType, this);
         }
-
-        public void DisplayTooltip(int characterIndex)
-        {
-            int[] keys = _displayedLogs.Keys.ToArray();
-            if (keys.Length == 0)
-            {
-                HideTooltip();
-                return;
-            }
-            int target = keys[0];
-            for (int i = 1; i < keys.Length && characterIndex > target; target = keys[i++]) ;
-            var targetLog = _displayedLogs[target];
-            
-            // adjust pos of tooltip to mouse pos
-            _tooltip.transform.position = Input.mousePosition - Vector3.up * _tooltip.RectTransform.sizeDelta.y / 1.25f;
-
-            if (NeedleConsoleBase.InDeveloperMode && _entryLogger.DevTooltip(targetLog, _typeToColor) != null)
-            {
-                _tooltip.SetHeader("Dev tooltip");
-                _tooltip.SetTooltip(String.Join("\n", _entryLogger.DevTooltip(targetLog, _typeToColor)));
-            }
-            
-            else if (!NeedleConsoleBase.InDeveloperMode && _entryLogger.PlayerTooltip(targetLog, _typeToColor) != null)
-            {
-                _tooltip.SetHeader("Additional info");
-                _tooltip.SetTooltip(String.Join("\n", _entryLogger.PlayerTooltip(targetLog, _typeToColor)));
-            }
-            else
-            {
-                // we don't want to see tooltip if return value is null.
-                _tooltip.gameObject.SetActive(false);
-                return;
-            }
-
-            _tooltip.gameObject.SetActive(true);
-        }
-        
-        public void HideTooltip() => _tooltip.gameObject.SetActive(false);
         
         public void FilterBy(T[] filters)
         {
@@ -184,5 +144,15 @@ namespace NeedleAssets.Console.UI
 
         private void UpdateDictionaryLog(Dictionary<int, ConsoleLogEntry<T>> dictionary, ConsoleLogEntry<T> entry) => 
             dictionary[dictionary.Count > 0 ? (dictionary.Keys.Last() + entry.ToLog(_entryLogger, _typeToColor).Length) : entry.ToLog(_entryLogger, _typeToColor).Length] = entry;
+
+        public ConsoleLogEntry<T> GetTargetLog(int characterIndex)
+        {
+            int[] keys = _displayedLogs.Keys.ToArray();
+            if (keys.Length == 0) return null;
+            
+            int target = keys[0];
+            for (int i = 1; i < keys.Length && characterIndex > target; target = keys[i++]) ;
+            return _displayedLogs[target];
+        }
     }
 }

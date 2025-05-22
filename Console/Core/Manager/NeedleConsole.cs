@@ -21,12 +21,12 @@ namespace NeedleAssets.Console.Core.Manager
         protected virtual T Input => default(T);
         
         [SerializeField] protected LogText output;
-        [SerializeField] protected ConsoleTooltip tooltip;
+        //[SerializeField] protected ConsoleTooltip tooltip;
 
         public override void Awake()
         {
             base.Awake();
-            _console = new ConsoleUI<T>(output, MessageLogger(), TypeToColors, tooltip, DeveloperMode(),Info,
+            _console = new ConsoleUI<T>(output, MessageLogger(), TypeToColors, DeveloperMode(),Info,
                 Warning,Error, Debug, Input);
             _instance = this;
         }
@@ -40,5 +40,13 @@ namespace NeedleAssets.Console.Core.Manager
         public static void LogColor(object message, Color color) =>
             _instance._console.Log(Utilities.Utils.ColorizeText(message.ToString(), color));
         public static void Log(object message, T type) => _instance._console.Log(message.ToString(), type);
+        
+        public static ConsoleLogEntry<T> GetTargetLog(int characterIndex) => _instance._console.GetTargetLog(characterIndex);
+        
+        public static string[] GetTooltipMessage(ConsoleLogEntry<T> logEntry)
+        {
+            if (_instance.DeveloperMode()) return _instance.MessageLogger().DevTooltip(logEntry, _instance.TypeToColors);
+            return _instance.MessageLogger().PlayerTooltip(logEntry, _instance.TypeToColors);
+        }
     }
 }
