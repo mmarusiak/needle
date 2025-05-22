@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using NeedleAssets.Console.Utilities;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 namespace NeedleAssets.Console.UI
 {
@@ -12,8 +14,11 @@ namespace NeedleAssets.Console.UI
     {
         private TextMeshProUGUI _textMeshProUGUI;
         private bool _mouseIsOverText;
-        private readonly List<Action<int>> _onHoverActions = new();
-        private readonly List<Action> _onQuitHoverActions = new();
+        
+        
+        [SerializeField] private UnityEvent<int> onHover;
+        [SerializeField] private UnityEvent onQuitHover;
+        [SerializeField] private UnityEvent onTextRectResized;
 
         private void Awake() => _textMeshProUGUI = GetComponent<TextMeshProUGUI>();
 
@@ -26,7 +31,7 @@ namespace NeedleAssets.Console.UI
         public void OnPointerExit(PointerEventData eventData)
         {
             _mouseIsOverText = false;
-            foreach (var action in _onQuitHoverActions) action();
+            onQuitHover?.Invoke();
         }
 
         public void OnPointerMove(PointerEventData eventData)
@@ -43,12 +48,12 @@ namespace NeedleAssets.Console.UI
             int visibleCharIndex = Utils.GetNearestCharacterWithMaxDistance(_textMeshProUGUI, mousePosition, 10);
             if (visibleCharIndex == -1)
             {
-                foreach (var action in _onQuitHoverActions) action();
+                onQuitHover?.Invoke();
                 return;
             }
 
             TMP_CharacterInfo charInfo = _textMeshProUGUI.textInfo.characterInfo[visibleCharIndex];
-            foreach (var listener in _onHoverActions) listener(charInfo.index);
+            onHover?.Invoke(charInfo.index);
         }
 
         public string Text
@@ -59,13 +64,14 @@ namespace NeedleAssets.Console.UI
                 _textMeshProUGUI.text = value;
                 if (_textMeshProUGUI.rectTransform.sizeDelta.y > _textMeshProUGUI.preferredHeight) return;
                 _textMeshProUGUI.rectTransform.sizeDelta = new Vector2(_textMeshProUGUI.rectTransform.sizeDelta.x, _textMeshProUGUI.preferredHeight);
+                onTextRectResized?.Invoke();
             }
         }
 
-        public void AddHoverListener(Action<int> listener) => _onHoverActions.Add(listener);
-        public void RemoveHoverListener(Action<int> listener) => _onHoverActions.Remove(listener);
+        public void AddHoverListener(UnityAction<int> listener) => onHover.AddListener(listener);
+        public void RemoveHoverListener(UnityAction<int> listener) => onHover.RemoveListener(listener);
         
-        public void AddQuitHoverListener(Action listener) => _onQuitHoverActions.Add(listener);
-        public void RemoveQuitHoverListener(Action listener) => _onQuitHoverActions.Remove(listener);
+        public void AddQuitHoverListener(UnityAction listener) => onQuitHover.AddListener(listener);
+        public void RemoveQuitHoverListener(UnityAction listener) => onQuitHover.RemoveListener(listener);
     }
 }

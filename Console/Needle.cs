@@ -1,14 +1,16 @@
 using System.Collections.Generic;
-using NeedleAssets.Console.Core.Command;
 using NeedleAssets.Console.Core.Manager;
 using NeedleAssets.Console.UI.Entries;
 using NeedleAssets.Console.Utilities;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace NeedleAssets.Console
 {
     public class Needle : NeedleConsole<MessageType>
     {
+        [SerializeField] private ScrollRect outputScrollRect;
+        
         protected override Dictionary<MessageType, Color> TypeToColors => new ()
         {
             {MessageType.Info, NeedleColors.Colors[0]},
@@ -25,5 +27,9 @@ namespace NeedleAssets.Console
         protected override MessageType Input => MessageType.UserInput;
 
         protected override IEntryLogger<MessageType> MessageLogger() => new NeedleEntryLogger<MessageType>();
+        protected override void _onOutputChanged()
+        {
+           
+        }
     }
 }

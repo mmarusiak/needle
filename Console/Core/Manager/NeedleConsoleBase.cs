@@ -15,7 +15,10 @@ namespace NeedleAssets.Console.Core.Manager
 #endif
             return false;
         }
+
+        protected abstract void _onOutputChanged();
         
+        public static void OnOutputChanged() => _instance._onOutputChanged();
         public static bool InDeveloperMode => _instance.DeveloperMode();
     }
 }

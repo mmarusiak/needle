@@ -91,8 +91,11 @@ namespace NeedleAssets.Console.UI
         public void Debug(string message, object source = null, [CallerMemberName] string memberName = "") => Log(message, _debugType, source, memberName);
         public void LogInput(string message, object source = null, [CallerMemberName] string memberName = "") => Log(message, _inputType, source, memberName);
 
-        protected virtual void DisplayLogs(List<ConsoleLogEntry<T>> logs) =>
-            _output.Text =  string.Join("\n", logs.Select(log => log.ToLog(_entryLogger, _typeToColor)));
+        protected virtual void DisplayLogs(List<ConsoleLogEntry<T>> logs)
+        {
+            _output.Text = string.Join("\n", logs.Select(log => log.ToLog(_entryLogger, _typeToColor)));
+            NeedleConsoleBase.OnOutputChanged();
+        }
 
         public void HandleInput(string input)
         {
@@ -177,7 +180,6 @@ namespace NeedleAssets.Console.UI
             }
             
             DisplayedLogs = filtered;
-            UnityEngine.Debug.Log(DisplayedLogs.Values.ToList().Count);
         }
 
         private void UpdateDictionaryLog(Dictionary<int, ConsoleLogEntry<T>> dictionary, ConsoleLogEntry<T> entry) => 

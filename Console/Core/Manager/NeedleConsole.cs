@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NeedleAssets.Console.UI;
 using NeedleAssets.Console.UI.Entries;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace NeedleAssets.Console.Core.Manager
 {
@@ -19,8 +20,8 @@ namespace NeedleAssets.Console.Core.Manager
         protected virtual T Debug => default(T);
         protected virtual T Input => default(T);
         
-        [SerializeField] private LogText output;
-        [SerializeField] private ConsoleTooltip tooltip;
+        [SerializeField] protected LogText output;
+        [SerializeField] protected ConsoleTooltip tooltip;
 
         public override void Awake()
         {
