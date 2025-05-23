@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NeedleAssets.Console.Core.Command;
 using NeedleAssets.Console.Core.Registry;
@@ -39,10 +40,15 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
             }
 
             if (_lastEntry == entry) return;
+
+            var range = ..Utilities.Utils.Min(entry.Length, _lastEntry.Length);
+            if (Math.Abs(entry.Length - _lastEntry.Length) == 1 && entry[range] == _lastEntry[range])
+                _suggestionParent = GetNeighbour(entry.Length - _lastEntry.Length == 1, entry);
+            else _suggestionParent = CommandRegistry.CommandTree.NodeByName(entry);
             
-            _suggestionParent = _lastEntry.Length > entry.Length ? (_suggestionParent == null ? CommandRegistry.CommandTree.NodeByName(entry) : _suggestionParent.Parent) :
-                _suggestionParent?.Find(entry[^1]);
+            //Needle.Log((entry[range] == _lastEntry[range]) + " - " + entry[range] + " - " + _lastEntry[range]);
             _lastEntry = entry;
+            
             if (_suggestionParent == null)
             {
                 SetStateOfAllSuggestions(false);
@@ -56,6 +62,11 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
             for (; i < _suggestions.Length && i < commands.Count; i++) _suggestions[i].SetConsoleCommand(commands[i], _parameterLogger);
             for (; i < _suggestions.Length; i++) _suggestions[i].HideText();
         }
+
+        private TreeNode<ConsoleCommand> GetNeighbour(bool direction, string entry)
+            => direction ? _suggestionParent?.Find(entry[^1]) : 
+                _suggestionParent != null ? _suggestionParent.Parent : CommandRegistry.CommandTree.NodeByName(entry);
+        
 
         private void AddSuggestions(TreeNode<ConsoleCommand> command, List<ConsoleCommand> suggestions, int amount)
         {

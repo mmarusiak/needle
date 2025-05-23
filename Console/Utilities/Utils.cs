@@ -79,5 +79,7 @@ namespace NeedleAssets.Console.Utilities
 
         public static Dictionary<TK, TV> MergeDictionaries<TK, TV>(params Dictionary<TK, TV>[] dictionaries) => 
             dictionaries.SelectMany(dict => dict).ToDictionary(pair => pair.Key, pair => pair.Value);
+        
+        public static T Min<T>(params T[] values) where T : IComparable<T> => values.Min();
     }
 }
