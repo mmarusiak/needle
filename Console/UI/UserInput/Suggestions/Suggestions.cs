@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NeedleAssets.Console.Core.Command;
 using NeedleAssets.Console.Core.Registry;
 using NeedleAssets.Console.Core.Registry.TreeTri;
 using NeedleAssets.Console.UI.UserInput.Parameters;
+using NeedleAssets.Console.Utilities;
 using TMPro;
 using UnityEngine;
 
@@ -19,13 +21,13 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
         
         private Suggestion[] _suggestions; 
         // default suggestion logger
-        private IParameterLogger _parameterLogger = new NeedleParameterLogger();
+        private readonly IParameterLogger _parameterLogger = new NeedleParameterLogger();
 
         private string _lastEntry = "";
         
         private void Awake()
         {
-            _suggestions = System.Array.ConvertAll(suggestionsTexts, text => new Suggestion(text));
+            _suggestions = System.Array.ConvertAll(suggestionsTexts, text => new Suggestion(text, this));
             foreach (var text in suggestionsTexts) text.color = normalColor;
         }
 
@@ -35,7 +37,20 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
             // start of an arguments!
             if (entry.Contains(" "))
             {
-                // try to show only specific one!
+                var suggs = _suggestions.Where(sug => !sug.Hidden).ToArray();
+                if (suggs.Length != 1)
+                {
+                    foreach (var sugg in suggs) sugg.HideText();
+                    return;
+                }
+                var sug = suggs[0];
+                var e = entry.Split(' ')[0];
+                if (sug.SuggestedCommand.Name != e)
+                {
+                    sug.HideText();
+                    return;
+                }
+                sug.NextParameter(Utils.CountSubstringInString(entry," "), _parameterLogger);
                 return;
             }
 
@@ -59,7 +74,7 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
             List<ConsoleCommand> commands = new List<ConsoleCommand>();
             AddSuggestions(_suggestionParent, commands, _suggestions.Length);
             int i = 0;
-            for (; i < _suggestions.Length && i < commands.Count; i++) _suggestions[i].SetConsoleCommand(commands[i], _parameterLogger);
+            for (; i < _suggestions.Length && i < commands.Count; i++) _suggestions[i].SetConsoleCommand(commands[i], entry, _parameterLogger);
             for (; i < _suggestions.Length; i++) _suggestions[i].HideText();
         }
 
@@ -97,5 +112,8 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
                 text.gameObject.SetActive(state);
             }
         }
+        
+        public Color SelectionColor => selectionColor;
+        public Color NormalColor => normalColor;
     }
 }
