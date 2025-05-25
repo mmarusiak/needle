@@ -25,14 +25,14 @@ namespace NeedleAssets.Console.UI.UserInput
             if (Input.GetKeyDown(KeyCode.UpArrow)) 
             { 
                 _suggestions.UpSelection();
-                placeholder.GetComponent<TextMeshProUGUI>().text = _suggestions.GetCurrentSuggestionSilently().Name;
+                _placeholder.text = _suggestions.GetCurrentSuggestionSilently().Name;
                 placeholder.enabled = true;
                 return;
             }
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
                 _suggestions.DownSelection();
-                placeholder.GetComponent<TextMeshProUGUI>().text = _suggestions.GetCurrentSuggestionSilently().Name;
+                _placeholder.text = _suggestions.GetCurrentSuggestionSilently().Name;
                 placeholder.enabled = true;
                 return;
             }
@@ -45,8 +45,17 @@ namespace NeedleAssets.Console.UI.UserInput
                 _placeholder.text = originalPlaceholderLabel;
                 return;
             }
-            _placeholder.text = originalPlaceholderLabel;
+            // to prevent unfocusing
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                onEndEdit.Invoke(text);
+                return;
+            }
             base.OnUpdateSelected(eventData); // call default behavior otherwise
         }
+        
+        public void OnEdited() => _placeholder.text = originalPlaceholderLabel;
+        
+        public void Clear() => text = "";
     }
 }

@@ -6,5 +6,6 @@ namespace NeedleAssets.Console.UI.UserInput.Parameters
     {
         public string[] ParametersOverview(ConsoleCommand command);
         public string[] ParametersDescription(ConsoleCommand command);
+        public string[] RawParameters(ConsoleCommand command);
     }
 }

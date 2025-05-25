@@ -6,6 +6,7 @@ using NeedleAssets.Console.Core;
 using NeedleAssets.Console.Core.Manager;
 using NeedleAssets.Console.Core.Registry;
 using NeedleAssets.Console.UI.Entries;
+using NeedleAssets.Console.Utilities;
 using UnityEngine;
 
 namespace NeedleAssets.Console.UI
@@ -97,6 +98,7 @@ namespace NeedleAssets.Console.UI
 
         public void HandleInput(string input)
         {
+            if (Utils.CountSubstringInString(input, " ") == input.Length) return;
             LogInput(input);
             T commandType = CommandProcessor.RunCommand(input, out string[] output) ? _infoType : _errorType;
             foreach (string outmsg in output) Log(outmsg, commandType, this);

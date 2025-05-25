@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NeedleAssets.Console.Core.Command;
 
@@ -27,6 +28,19 @@ namespace NeedleAssets.Console.UI.UserInput.Parameters
             {
                 if (parameter.Generic) result.Add($"[{parameter.Info.ParameterType.Name}]{parentParameterName}:{parameter.Name}");
                 else result.Add(string.Join(", ", GetSubParameters($"{parentParameterName}:{parameter.Name}", parameter.SubParameters)));
+            }
+            return result.ToArray();
+        }
+
+        public string[] RawParameters(ConsoleCommand command) => GetRawSubParameters("", command.Parameters);
+
+        private string[] GetRawSubParameters(string parentParameterName, Parameter[] subParameters)
+        {
+            List<string> result = new();
+            foreach (var parameter in subParameters)
+            {
+                if (parameter.Generic) result.Add($"[{parameter.Info.ParameterType.Name}]{parentParameterName}:{parameter.Name}");
+                else result.AddRange(GetSubParameters($"{parentParameterName}:{parameter.Name}", parameter.SubParameters));
             }
             return result.ToArray();
         }

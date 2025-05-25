@@ -26,14 +26,16 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
             _index = 0;
             ShowText();
             _suggestedCommand = command;
-            _text.text = $"{StyleByEntry(command, entry)} {string.Join(", ", parameterLogger.ParametersOverview(command))}";
+            _text.text = $"{StyleByEntry(command, entry)} {string.Join(", ", parameterLogger.RawParameters(command))}";
         }
 
         public void NextParameter(int index, IParameterLogger parameterLogger)
         {
             if (_suggestedCommand == null) return;
             ShowText();
-            string[] parameters = parameterLogger.ParametersOverview(_suggestedCommand);
+            string[] parameters = parameterLogger.RawParameters(_suggestedCommand);
+            //Needle.Log(index);
+            //foreach (string parameter in parameters) Needle.Log(parameter);
             for (int i = 0; i < index && i < parameters.Length; i++)
                 parameters[i] = Utils.ColorizeText(Utils.BoldText(parameters[i]), _manager.HighlightedColor);
             _text.text = $"{StyleByEntry(_suggestedCommand, _suggestedCommand.Name)} {string.Join(", ", parameters)}";
@@ -44,7 +46,7 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
 
         public ConsoleCommand SelectCommand(IParameterLogger parameterLogger)
         {
-            _text.text = Utils.ColorizeText($"{_suggestedCommand.Name} {string.Join(", ", parameterLogger.ParametersOverview(_suggestedCommand))}", _manager.SelectionColor);
+            _text.text = Utils.ColorizeText($"{_suggestedCommand.Name} {string.Join(", ", parameterLogger.RawParameters(_suggestedCommand))}", _manager.SelectionColor);
             return _suggestedCommand;
         }
 
