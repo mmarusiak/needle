@@ -15,6 +15,7 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
     {
         [SerializeField] private TextMeshProUGUI[] suggestionsTexts;
         [SerializeField] private Color normalColor;
+        [SerializeField] private Color highlightedColor;
         [SerializeField] private Color selectionColor;
 
         private TreeNode<ConsoleCommand> _suggestionParent = CommandRegistry.CommandTree.Root;
@@ -24,6 +25,19 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
         private readonly IParameterLogger _parameterLogger = new NeedleParameterLogger();
 
         private string _lastEntry = "";
+        
+        private int _selectedSuggestion = 0;
+        private ConsoleCommand _currentSuggestion;
+        
+        protected int SelectedSuggestion
+        {
+            get => _selectedSuggestion;
+            set
+            {
+                if (_selectedSuggestion != -1) _suggestions[_selectedSuggestion].Redraw(_parameterLogger);
+                SelectSuggestion(value);
+            }
+        }
         
         private void Awake()
         {
@@ -35,6 +49,8 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
         {
             // to refactor all of this mess, entry does not need to change between old entry by 1 char, user can select delete f.e. ...
             // start of an arguments!
+            SelectedSuggestion = -1;
+            _currentSuggestion = null;
             if (entry.Contains(" "))
             {
                 var suggs = _suggestions.Where(sug => !sug.Hidden).ToArray();
@@ -112,8 +128,50 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
                 text.gameObject.SetActive(state);
             }
         }
+
+        private void SelectSuggestion(int index)
+        {
+            var activeSuggestions = _suggestions.Where(suggestion => !suggestion.Hidden).ToArray();
+            if (activeSuggestions.Length == 0 || index == -1)
+            {
+                _selectedSuggestion = -1;
+                _currentSuggestion = null;
+                return;
+            }
+            var suggestion = activeSuggestions[activeSuggestions.Length % (index + 1)];
+            _selectedSuggestion = Array.IndexOf(_suggestions, suggestion);
+            _currentSuggestion = suggestion.SelectCommand(_parameterLogger);
+        }
+
+        public void UpSelection()
+        {
+            SelectedSuggestion++;
+        }
         
-        public Color SelectionColor => selectionColor;
+        public void DownSelection()
+        {
+            switch (SelectedSuggestion)
+            {
+                case > 0:
+                    SelectedSuggestion--;
+                    break;
+                case 0:
+                    SelectedSuggestion = _suggestions.Where(suggestion => !suggestion.Hidden).ToArray().Length - 1;
+                    break;
+            }
+        }
+
+        public ConsoleCommand GetCurrentSuggestionSilently() => _currentSuggestion;
+        
+        public ConsoleCommand GetCurrentSuggestion()
+        {
+            var s = _currentSuggestion;
+            _currentSuggestion = null;
+            return s;
+        }
+
         public Color NormalColor => normalColor;
+        public Color HighlightedColor => highlightedColor;
+        public Color SelectionColor => selectionColor;
     }
 }

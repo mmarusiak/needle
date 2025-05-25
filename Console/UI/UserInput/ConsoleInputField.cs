@@ -17,9 +17,20 @@ namespace NeedleAssets.Console.UI.UserInput
         public override void OnUpdateSelected(UnityEngine.EventSystems.BaseEventData eventData) 
         { 
             // handle mobile/gamepads inputs!!!!!!
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.Tab)) 
+            if (Input.GetKeyDown(KeyCode.UpArrow)) 
             { 
-                // handle suggestions/autocompletion
+                _suggestions.UpSelection();
+                return;
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                _suggestions.DownSelection();
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                var output = _suggestions.GetCurrentSuggestion();
                 return;
             }
             // add next suggestion
