@@ -20,17 +20,21 @@ namespace NeedleAssets.Console.UI.UserInput
             if (Input.GetKeyDown(KeyCode.UpArrow)) 
             { 
                 _suggestions.UpSelection();
+                placeholder.GetComponent<TextMeshProUGUI>().text = _suggestions.GetCurrentSuggestionSilently().Name;
                 return;
             }
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
                 _suggestions.DownSelection();
+                placeholder.GetComponent<TextMeshProUGUI>().text = _suggestions.GetCurrentSuggestionSilently().Name;
                 return;
             }
 
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 var output = _suggestions.GetCurrentSuggestion();
+                text = output.Name;
+                caretPosition = text.Length;
                 return;
             }
             // add next suggestion

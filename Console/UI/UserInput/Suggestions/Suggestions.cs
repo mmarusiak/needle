@@ -26,8 +26,8 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
 
         private string _lastEntry = "";
         
-        private int _selectedSuggestion = 0;
-        private ConsoleCommand _currentSuggestion;
+        private ConsoleCommand _selectedSuggestionCmd;
+        [SerializeField] private int _selectedSuggestion = 0;
         
         protected int SelectedSuggestion
         {
@@ -50,7 +50,7 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
             // to refactor all of this mess, entry does not need to change between old entry by 1 char, user can select delete f.e. ...
             // start of an arguments!
             SelectedSuggestion = -1;
-            _currentSuggestion = null;
+            _selectedSuggestionCmd = null;
             if (entry.Contains(" "))
             {
                 var suggs = _suggestions.Where(sug => !sug.Hidden).ToArray();
@@ -72,7 +72,7 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
 
             if (_lastEntry == entry) return;
 
-            var range = ..Utilities.Utils.Min(entry.Length, _lastEntry.Length);
+            var range = ..Utils.Min(entry.Length, _lastEntry.Length);
             if (Math.Abs(entry.Length - _lastEntry.Length) == 1 && entry[range] == _lastEntry[range])
                 _suggestionParent = GetNeighbour(entry.Length - _lastEntry.Length == 1, entry);
             else _suggestionParent = CommandRegistry.CommandTree.NodeByName(entry);
@@ -135,12 +135,12 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
             if (activeSuggestions.Length == 0 || index == -1)
             {
                 _selectedSuggestion = -1;
-                _currentSuggestion = null;
+                _selectedSuggestionCmd = null;
                 return;
             }
-            var suggestion = activeSuggestions[activeSuggestions.Length % (index + 1)];
+            var suggestion = activeSuggestions[index % activeSuggestions.Length];
             _selectedSuggestion = Array.IndexOf(_suggestions, suggestion);
-            _currentSuggestion = suggestion.SelectCommand(_parameterLogger);
+            _selectedSuggestionCmd = suggestion.SelectCommand(_parameterLogger);
         }
 
         public void UpSelection()
@@ -161,12 +161,12 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
             }
         }
 
-        public ConsoleCommand GetCurrentSuggestionSilently() => _currentSuggestion;
+        public ConsoleCommand GetCurrentSuggestionSilently() => _selectedSuggestionCmd;
         
         public ConsoleCommand GetCurrentSuggestion()
         {
-            var s = _currentSuggestion;
-            _currentSuggestion = null;
+            var s = _selectedSuggestionCmd;
+            _selectedSuggestionCmd = null;
             return s;
         }
 
