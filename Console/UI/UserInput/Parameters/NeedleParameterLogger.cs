@@ -40,7 +40,7 @@ namespace NeedleAssets.Console.UI.UserInput.Parameters
             foreach (var parameter in subParameters)
             {
                 if (parameter.Generic) result.Add($"[{parameter.Info.ParameterType.Name}]{parentParameterName}:{parameter.Name}");
-                else result.AddRange(GetSubParameters($"{parentParameterName}:{parameter.Name}", parameter.SubParameters));
+                else result.AddRange(GetRawSubParameters($"{parentParameterName}:{parameter.Name}", parameter.SubParameters));
             }
             return result.ToArray();
         }

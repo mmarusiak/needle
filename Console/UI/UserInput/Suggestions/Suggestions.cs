@@ -27,9 +27,9 @@ namespace NeedleAssets.Console.UI.UserInput.Suggestions
         private string _lastEntry = "";
         
         private ConsoleCommand _selectedSuggestionCmd;
-        [SerializeField] private int _selectedSuggestion = 0;
-        
-        protected int SelectedSuggestion
+        private int _selectedSuggestion;
+
+        private int SelectedSuggestion
         {
             get => _selectedSuggestion;
             set
