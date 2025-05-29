@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using NeedleAssets.Console.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 
 namespace NeedleAssets.Console.UI
 {
