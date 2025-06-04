@@ -1,3 +1,4 @@
+using NeedleAssets.Console.UI.Output;
 using NeedleAssets.Console.Utilities;
 using TMPro;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace NeedleAssets.Console.UI
         [SerializeField] private UnityEvent onTextRectResized;
 
         private void Awake() => _textMeshProUGUI = GetComponent<TextMeshProUGUI>();
-
+        
         public void OnPointerEnter(PointerEventData eventData)
         {
             _mouseIsOverText = true;
