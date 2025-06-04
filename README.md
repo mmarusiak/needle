@@ -6,13 +6,17 @@ Open source Unity Console
 ### W pigułce - co to za projekt?
 
 Chcę stworzyć otwarto-źródłową konsolę dla silnika do gier Unity. Jest mnóstwo tutoriali jak taką zrobić, jednak w nich zawsze brakuje mi:
-* Modyfikalności - jakkolwiek nie po polsku to brzmi, to chcę by konsola nad którą pracuje była bardziej frameworkiem. Żeby w paczce którą dev pobiera były narzędzia, moduły i jakaś przykładowa konsola, z której może korzystać ale też może się bazować tworząc własną konsolę!
+* Modyfikalności - jakkolwiek nie po polsku to brzmi, to chcę by konsola nad którą pracuje była bardziej frameworkiem niż tylko gotową konsolą, żeby w paczce którą dev pobiera były narzędzia, moduły i jakaś przykładowa konsola, z której może korzystać ale też może się po prostu na niej bazować tworząc własną konsolę korzystając z modułów/narzędzi które dodałem i tworząc swoje własne!
 * Parser stringów - większość konsol dostępnych do Unity (szczególnie darmowych) potrzebuje określonego parsera dla danych "nie konwertowalnych na stringa" klas (np. klas które programista tworzy dla projektu) - Needle takich nie potrzebuje!
 * Używa wiele fajnych algorytmów, które sprawiają że działa po prostu lepiej ;)
 
 ![](./Docs/Showcase1.gif)
 
 **Co jest interesującego z punktu widzenia algorytmów/informatyki?**
+* [Rejestrowanie metod](#rejestrowanie-metod)
+* [Parser stringów - klas złożonych](#parser-stringów---klas-złożonych)
+* [Sugestie](#sugestie)
+* [Wysoka modyfikowalność konsoli](#wysoka-modyfikowalność-konsoli)
 
 ### Rejestrowanie metod
 
