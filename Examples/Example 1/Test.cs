@@ -21,7 +21,7 @@ namespace NeedleAssets.Examples.Example_1
         }
         
         
-        [ConsoleCommand("echo", "hello dear dev!")]
+        [ConsoleCommand("echo", "hello dear dev!", false)]
         [ParamDescriptor("some test description")]
         [ParamIdentifier("my first parameter")]
         public string Echo(string param)
